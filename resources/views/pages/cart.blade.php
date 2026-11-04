@@ -79,7 +79,10 @@
                                             </template>
                                             <div class="min-w-0">
                                                 <h3 class="text-xs sm:text-sm font-bold text-[#06111E] leading-tight truncate" x-text="item.name"></h3>
-                                                <span class="text-[10px] sm:text-xs text-slate-400 font-medium" x-text="`$${item.denom} Denomination`"></span>
+                                                <div class="flex items-center gap-1.5 flex-wrap mt-0.5">
+                                                    <span class="text-[10px] sm:text-xs text-slate-400 font-medium" x-text="`$${item.denom} Denomination`"></span>
+                                                    <span class="text-[10px] text-[#2563EB] font-bold" x-show="currentCurrency !== 'MWK'" x-text="'(≈ ' + formatMwk(item.denom) + ')'"></span>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -166,9 +169,12 @@
                                     <span>Processing Fee</span>
                                     <span class="font-semibold text-emerald-600">$0.00</span>
                                 </div>
-                                <div class="border-t border-slate-100 pt-3 flex justify-between font-extrabold text-[#06111E] text-base">
-                                    <span>Total</span>
-                                    <span x-text="formatCurrency(cartSubtotal)"></span>
+                                <div class="border-t border-slate-100 pt-3 flex justify-between items-baseline font-extrabold text-[#06111E] text-base">
+                                    <div>
+                                        <span>Total</span>
+                                        <span class="block text-[11px] font-bold text-[#2563EB]" x-show="currentCurrency !== 'MWK'" x-text="'≈ ' + formatMwk(cartSubtotal)"></span>
+                                    </div>
+                                    <span class="text-xl font-black text-[#2563EB]" x-text="formatCurrency(cartSubtotal)"></span>
                                 </div>
                             </div>
 

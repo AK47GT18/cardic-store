@@ -48,6 +48,11 @@
                         <span>USD ($)</span>
                         <span x-show="currentCurrency === 'USD'" class="text-[#38BDF8]">✓</span>
                     </button>
+                    <button type="button" @click="setCurrency('MWK', 'MK ', 1750); open = false"
+                        class="w-full text-left px-3 py-1.5 text-xs hover:bg-white/10 flex items-center justify-between text-white">
+                        <span>MWK (MK)</span>
+                        <span x-show="currentCurrency === 'MWK'" class="text-[#38BDF8]">✓</span>
+                    </button>
                     <button type="button" @click="setCurrency('EUR', '€', 0.92); open = false"
                         class="w-full text-left px-3 py-1.5 text-xs hover:bg-white/10 flex items-center justify-between text-white">
                         <span>EUR (€)</span>

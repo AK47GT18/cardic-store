@@ -69,40 +69,63 @@
                 </div>
             </div>
 
-            {{-- Denominations Selection Pills (Clean, No Save Text) --}}
+            {{-- Denominations Selection Pills & Custom Amount --}}
             <div class="mt-2.5">
-                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                    Select Value:
+                <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                    <span>Select Value:</span>
+                    <span class="text-slate-400 font-semibold normal-case">Limit: $10 – $500</span>
                 </div>
-                <div class="grid grid-cols-4 gap-1 sm:gap-1.5">
+                <div class="flex flex-wrap gap-1 sm:gap-1.5">
                     @foreach($card['denominations'] as $denom)
                         <button 
                             type="button"
-                            @click="selectedDenom = {{ $denom }}"
-                            :class="selectedDenom === {{ $denom }} 
+                            @click="setPreset({{ $denom }})"
+                            :class="(!isCustom && selectedDenom === {{ $denom }}) 
                                 ? 'bg-[#2563EB] text-white font-bold shadow-xs scale-[1.02]' 
                                 : 'bg-[#eff4ff] hover:bg-[#dce9ff] text-slate-700 font-semibold'"
-                            class="py-1 rounded-lg text-[10px] sm:text-xs transition-all duration-150 cursor-pointer text-center">
+                            class="flex-1 min-w-[48px] py-1 rounded-lg text-[10px] sm:text-xs transition-all duration-150 cursor-pointer text-center">
                             ${{ $denom }}
                         </button>
                     @endforeach
+                    <button 
+                        type="button"
+                        @click="enableCustom()"
+                        :class="isCustom 
+                            ? 'bg-[#2563EB] text-white font-bold shadow-xs scale-[1.02]' 
+                            : 'bg-[#eff4ff] hover:bg-[#dce9ff] text-slate-700 font-semibold'"
+                        class="flex-1 min-w-[56px] py-1 rounded-lg text-[10px] sm:text-xs transition-all duration-150 cursor-pointer text-center">
+                        Custom
+                    </button>
+                </div>
+
+                {{-- Custom Amount Input ($10 - $500) --}}
+                <div x-show="isCustom" x-cloak class="mt-2 flex items-center gap-2 bg-slate-50 border border-blue-200 rounded-xl px-3 py-1.5 shadow-inner">
+                    <span class="text-xs font-bold text-slate-500">$</span>
+                    <input 
+                        type="number"
+                        min="10"
+                        max="500"
+                        step="1"
+                        x-model="customInput"
+                        @input="onCustomInput($event.target.value)"
+                        placeholder="10 - 500"
+                        class="w-full bg-transparent text-xs font-bold text-slate-800 outline-none placeholder:text-slate-400 placeholder:font-normal">
+                    <span class="text-[10px] font-extrabold text-[#2563EB] shrink-0" x-text="formatMwk(selectedDenom)"></span>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- Price & Action Trigger (Clean, No Save Text) --}}
+    {{-- Price & Live MWK Conversion (Instant badge removed) --}}
     <div class="mt-3 pt-2.5 bg-slate-50/80 p-2.5 sm:p-3 rounded-xl border border-slate-100">
-        <div class="flex items-baseline justify-between mb-2">
-            <div class="flex items-baseline gap-1">
+        <div class="flex items-center justify-between mb-2">
+            <div class="flex items-baseline gap-1.5 flex-wrap">
                 <span class="text-base sm:text-xl font-extrabold text-[#0F172A] tracking-tight" x-text="formatCurrency(selectedDenom)">
                     ${{ number_format($card['default_denomination'], 2) }}
                 </span>
+                <span class="text-[11px] font-bold text-[#2563EB]" x-show="currentCurrency !== 'MWK'" x-text="'(≈ ' + formatMwk(selectedDenom) + ')'"></span>
             </div>
-            <span class="text-[10px] font-bold text-emerald-700 flex items-center gap-0.5 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">
-                <span class="material-symbols-outlined text-xs">bolt</span>
-                <span>Instant</span>
-            </span>
+            <span class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Verified Vault</span>
         </div>
 
         <div class="flex items-center gap-1.5">

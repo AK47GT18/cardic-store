@@ -20,6 +20,28 @@
                     selectedDenom: {{ $card['default_denomination'] }},
                     discountPct: {{ $card['discount_pct'] }},
                     qty: 1,
+                    isCustom: false,
+                    customInput: {{ $card['default_denomination'] }},
+                    minLimit: 10,
+                    maxLimit: 500,
+                    setPreset(d) {
+                        this.isCustom = false;
+                        this.selectedDenom = d;
+                    },
+                    enableCustom() {
+                        this.isCustom = true;
+                        if (!this.customInput) {
+                            this.customInput = this.selectedDenom;
+                        }
+                    },
+                    onCustomInput(val) {
+                        let v = parseFloat(val) || 0;
+                        if (v > this.maxLimit) {
+                            v = this.maxLimit;
+                            this.customInput = this.maxLimit;
+                        }
+                        this.selectedDenom = v;
+                    },
                     get activePrice() {
                         return (this.selectedDenom * (1 - this.discountPct / 100)).toFixed(2);
                     },
@@ -120,21 +142,48 @@
                         </div>
                         <div class="text-xs text-slate-400 font-medium mb-5">{{ $card['badge_type'] }} • {{ $card['region'] }}</div>
 
-                        {{-- Denomination Selector --}}
+                        {{-- Denomination Selector with Custom Option & Limit --}}
                         <div class="mb-5">
-                            <label class="text-xs font-bold text-slate-600 block mb-2">Select Face Value:</label>
-                            <div class="grid grid-cols-4 gap-2">
+                            <div class="flex items-center justify-between text-xs font-bold text-slate-600 mb-2">
+                                <span>Select Face Value:</span>
+                                <span class="text-slate-400 font-semibold text-[11px]">Limit: $10 – $500</span>
+                            </div>
+                            <div class="grid grid-cols-5 gap-2">
                                 @foreach($card['denominations'] as $denom)
                                     <button 
                                         type="button"
-                                        @click="selectedDenom = {{ $denom }}"
-                                        :class="selectedDenom === {{ $denom }} 
+                                        @click="setPreset({{ $denom }})"
+                                        :class="(!isCustom && selectedDenom === {{ $denom }}) 
                                             ? 'bg-[#1d4ed8] text-white font-bold shadow-xs scale-[1.02]' 
                                             : 'bg-[#eff4ff] hover:bg-[#dce9ff] text-slate-700 font-semibold'"
                                         class="py-2 rounded-xl text-xs transition-all duration-150 cursor-pointer text-center">
                                         ${{ $denom }}
                                     </button>
                                 @endforeach
+                                <button 
+                                    type="button"
+                                    @click="enableCustom()"
+                                    :class="isCustom 
+                                        ? 'bg-[#1d4ed8] text-white font-bold shadow-xs scale-[1.02]' 
+                                        : 'bg-[#eff4ff] hover:bg-[#dce9ff] text-slate-700 font-semibold'"
+                                    class="py-2 rounded-xl text-xs transition-all duration-150 cursor-pointer text-center">
+                                    Custom
+                                </button>
+                            </div>
+
+                            {{-- Custom Amount Input --}}
+                            <div x-show="isCustom" x-cloak class="mt-3 flex items-center gap-2 bg-[#eff4ff] border border-blue-300 rounded-xl px-3 py-2 shadow-inner">
+                                <span class="text-sm font-bold text-slate-500">$</span>
+                                <input 
+                                    type="number"
+                                    min="10"
+                                    max="500"
+                                    step="1"
+                                    x-model="customInput"
+                                    @input="onCustomInput($event.target.value)"
+                                    placeholder="Enter $10 - $500"
+                                    class="w-full bg-transparent text-sm font-bold text-slate-800 outline-none placeholder:text-slate-400 placeholder:font-normal">
+                                <span class="text-xs font-extrabold text-[#1d4ed8] shrink-0" x-text="formatMwk(selectedDenom)"></span>
                             </div>
                         </div>
 
@@ -151,7 +200,7 @@
                             </div>
                         </div>
 
-                        {{-- Price Summary --}}
+                        {{-- Price Summary with Live MWK Conversion --}}
                         <div class="bg-[#eff4ff]/80 border border-blue-200/50 rounded-2xl p-4 mb-5">
                             <div class="flex justify-between items-center text-xs text-slate-500 mb-1.5">
                                 <span>Original Total:</span>
@@ -162,8 +211,11 @@
                                 <span class="font-bold" x-text="`- $${(activeSavings * qty).toFixed(2)}`"></span>
                             </div>
                             <div class="flex justify-between items-center pt-2 border-t border-blue-200/50">
-                                <span class="text-sm font-extrabold text-[#0b1c30]">Total Today:</span>
-                                <span class="text-xl font-extrabold text-[#1d4ed8]" x-text="`$${total}`"></span>
+                                <div>
+                                    <span class="text-sm font-extrabold text-[#0b1c30]">Total Today:</span>
+                                    <span class="block text-[11px] font-bold text-[#1d4ed8]" x-text="'≈ ' + formatMwk(total)"></span>
+                                </div>
+                                <span class="text-xl font-black text-[#1d4ed8]" x-text="formatCurrency(total)"></span>
                             </div>
                         </div>
 

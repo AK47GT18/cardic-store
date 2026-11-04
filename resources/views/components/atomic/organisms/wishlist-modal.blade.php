@@ -41,10 +41,15 @@
                 <template x-for="item in wishlist" :key="item.id">
                     <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs">
                         <div class="flex items-center gap-3 mb-3">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-xs text-white"
-                                 :class="item.gradient ?? 'from-blue-500 to-blue-600 bg-gradient-to-tr'">
-                                <span class="material-symbols-outlined text-lg" x-text="item.icon ?? 'card_giftcard'"></span>
-                            </div>
+                            <template x-if="item.image">
+                                <img :src="item.image" :alt="item.name" class="w-10 h-10 rounded-xl object-cover shrink-0 shadow-xs border border-slate-200">
+                            </template>
+                            <template x-if="!item.image">
+                                <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-xs text-white"
+                                     :class="item.gradient ?? 'from-blue-500 to-blue-600 bg-gradient-to-tr'">
+                                    <span class="material-symbols-outlined text-lg" x-text="item.icon ?? 'card_giftcard'"></span>
+                                </div>
+                            </template>
                             <div class="flex-1 min-w-0">
                                 <h4 class="text-xs font-bold text-slate-900 truncate" x-text="item.name"></h4>
                                 <span class="text-[10px] text-slate-400 uppercase font-semibold" x-text="item.brand"></span>

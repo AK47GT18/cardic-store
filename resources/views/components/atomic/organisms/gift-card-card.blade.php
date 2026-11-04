@@ -27,7 +27,16 @@
                 </span>
                 <button
                     type="button"
-                    @click.stop="toggleWishlist({ id: '{{ $card['id'] }}', name: '{{ $card['name'] }}', brand: '{{ $card['brand'] }}' })"
+                    @click.stop="toggleWishlist({ 
+                        id: '{{ $card['id'] }}', 
+                        name: '{{ $card['name'] }}', 
+                        brand: '{{ $card['brand'] }}',
+                        price: {{ $card['default_denomination'] }},
+                        denom: {{ $card['default_denomination'] }},
+                        icon: '{{ $card['icon'] }}',
+                        gradient: '{{ $card['gradient'] }}',
+                        image: '{{ !empty($card['image']) ? asset($card['image']) : '' }}'
+                    })"
                     class="w-7 h-7 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm flex items-center justify-center text-white transition-colors cursor-pointer"
                     title="Wishlist">
                     <span class="material-symbols-outlined text-sm" :class="wishlist.some(i => i.id === '{{ $card['id'] }}') ? 'text-rose-500 fill-1' : 'text-white'">
@@ -108,7 +117,8 @@
                     price: parseFloat(selectedDenom),
                     discount: 0,
                     icon: '{{ $card['icon'] }}',
-                    gradient: '{{ $card['gradient'] }}'
+                    gradient: '{{ $card['gradient'] }}',
+                    image: '{{ !empty($card['image']) ? asset($card['image']) : '' }}'
                 })"
                 class="flex-1 bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-[11px] sm:text-xs py-2 sm:py-2.5 rounded-lg font-bold flex items-center justify-center gap-1 transition-all shadow-xs cursor-pointer active:scale-95">
                 <span>Buy Now</span>
@@ -127,7 +137,8 @@
                     price: parseFloat(selectedDenom),
                     discount: 0,
                     icon: '{{ $card['icon'] }}',
-                    gradient: '{{ $card['gradient'] }}'
+                    gradient: '{{ $card['gradient'] }}',
+                    image: '{{ !empty($card['image']) ? asset($card['image']) : '' }}'
                 })"
                 class="p-2 sm:p-2.5 rounded-lg bg-white hover:bg-blue-50 text-[#2563EB] border border-blue-200/80 flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95"
                 title="Add to cart">

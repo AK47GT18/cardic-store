@@ -189,7 +189,8 @@
                                 price: parseFloat(activePrice),
                                 discount: {{ $card['discount_pct'] }},
                                 icon: '{{ $card['icon'] }}',
-                                gradient: '{{ $card['gradient'] }}'
+                                gradient: '{{ $card['gradient'] }}',
+                                image: '{{ !empty($card['image']) ? asset($card['image']) : '' }}'
                             })"
                             class="w-full bg-[#1d4ed8] hover:bg-[#0037b0] text-white font-extrabold py-4 rounded-2xl shadow-md text-sm flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-[0.98] mb-3">
                             <span class="material-symbols-outlined text-base">lock</span>
@@ -206,7 +207,8 @@
                                 price: parseFloat(activePrice),
                                 discount: {{ $card['discount_pct'] }},
                                 icon: '{{ $card['icon'] }}',
-                                gradient: '{{ $card['gradient'] }}'
+                                gradient: '{{ $card['gradient'] }}',
+                                image: '{{ !empty($card['image']) ? asset($card['image']) : '' }}'
                             })"
                             class="w-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-bold py-3 rounded-2xl text-sm flex items-center justify-center gap-2 transition-all cursor-pointer">
                             <span class="material-symbols-outlined text-base">add_shopping_cart</span>
@@ -216,7 +218,16 @@
                         {{-- Wishlist --}}
                         <button 
                             type="button"
-                            @click="toggleWishlist({ id: '{{ $card['id'] }}', name: '{{ $card['name'] }}', brand: '{{ $card['brand'] }}' })"
+                            @click="toggleWishlist({ 
+                                id: '{{ $card['id'] }}', 
+                                name: '{{ $card['name'] }}', 
+                                brand: '{{ $card['brand'] }}',
+                                price: parseFloat(activePrice),
+                                denom: selectedDenom,
+                                icon: '{{ $card['icon'] }}',
+                                gradient: '{{ $card['gradient'] }}',
+                                image: '{{ !empty($card['image']) ? asset($card['image']) : '' }}'
+                            })"
                             class="w-full mt-2 text-slate-500 hover:text-rose-600 text-xs font-semibold flex items-center justify-center gap-1.5 py-2 cursor-pointer transition-colors">
                             <span class="material-symbols-outlined text-sm">favorite_border</span>
                             Save to Wishlist

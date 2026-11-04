@@ -63,11 +63,16 @@
 
                 <template x-for="(item, index) in cart" :key="item.cartId">
                     <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs flex items-center gap-3.5 relative">
-                        {{-- Icon badge --}}
-                        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr text-white flex items-center justify-center shrink-0 shadow-xs"
-                             :class="item.gradient">
-                            <span class="material-symbols-outlined text-xl" x-text="item.icon"></span>
-                        </div>
+                        {{-- Image / Icon badge --}}
+                        <template x-if="item.image">
+                            <img :src="item.image" :alt="item.name" class="w-12 h-12 rounded-xl object-cover shrink-0 shadow-xs border border-slate-200">
+                        </template>
+                        <template x-if="!item.image">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-tr text-white flex items-center justify-center shrink-0 shadow-xs"
+                                 :class="item.gradient">
+                                <span class="material-symbols-outlined text-xl" x-text="item.icon"></span>
+                            </div>
+                        </template>
 
                         {{-- Info --}}
                         <div class="flex-1 min-w-0">

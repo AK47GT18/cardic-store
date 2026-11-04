@@ -197,6 +197,7 @@
                             discount: product.discount,
                             icon: product.icon,
                             gradient: product.gradient,
+                            image: product.image ?? null,
                             quantity: 1
                         });
                     }
@@ -207,7 +208,7 @@
 
                 buyNow(product) {
                     this.addToCart(product);
-                    this.cartOpen = true;
+                    window.location.href = '/cart';
                 },
 
                 removeFromCart(cartId) {

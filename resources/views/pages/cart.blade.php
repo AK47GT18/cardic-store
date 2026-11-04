@@ -66,12 +66,17 @@
                                             </button>
                                         </div>
 
-                                        {{-- Icon + Name --}}
+                                        {{-- Image / Icon + Name --}}
                                         <div class="col-span-10 sm:col-span-4 flex items-center gap-3">
-                                            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center shrink-0 shadow-sm text-white"
-                                                 :class="item.gradient">
-                                                <span class="material-symbols-outlined text-xl sm:text-2xl" x-text="item.icon"></span>
-                                            </div>
+                                            <template x-if="item.image">
+                                                <img :src="item.image" :alt="item.name" class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover shrink-0 shadow-sm border border-slate-200">
+                                            </template>
+                                            <template x-if="!item.image">
+                                                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center shrink-0 shadow-sm text-white"
+                                                     :class="item.gradient ?? 'bg-blue-600'">
+                                                    <span class="material-symbols-outlined text-xl sm:text-2xl" x-text="item.icon ?? 'card_giftcard'"></span>
+                                                </div>
+                                            </template>
                                             <div class="min-w-0">
                                                 <h3 class="text-xs sm:text-sm font-bold text-[#06111E] leading-tight truncate" x-text="item.name"></h3>
                                                 <span class="text-[10px] sm:text-xs text-slate-400 font-medium" x-text="`$${item.denom} Denomination`"></span>

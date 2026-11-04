@@ -135,18 +135,18 @@
                         window.location.href = '{{ route('marketplace') }}?search=' + encodeURIComponent(searchQuery || '');
                     }
                 "
-                class="hidden sm:flex items-center flex-1 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-sm xl:max-w-md mx-2">
+                class="hidden md:flex items-center w-44 lg:w-52 xl:w-60 mx-1 lg:mx-2 shrink-0">
                 <div
                     id="header-search-wrap"
-                    class="relative w-full flex items-center rounded-full px-3.5 py-2 gap-2 border transition-all duration-200 {{ $isHeroPage ? 'border-white/20 bg-white/10 hover:bg-white/15 focus-within:bg-slate-900/90 focus-within:border-[#38BDF8]' : 'border-slate-200 bg-slate-50 hover:bg-slate-100/70 focus-within:bg-white focus-within:border-[#2563EB] focus-within:ring-2 focus-within:ring-blue-100' }}">
-                    <span id="header-search-icon" class="material-symbols-outlined text-lg shrink-0 {{ $isHeroPage ? 'text-white/70' : 'text-slate-400' }}">search</span>
+                    class="relative w-full flex items-center rounded-full px-3 py-1.5 gap-1.5 border transition-all duration-200 {{ $isHeroPage ? 'border-white/20 bg-white/10 hover:bg-white/15 focus-within:bg-slate-900/90 focus-within:border-[#38BDF8]' : 'border-slate-200 bg-slate-50 hover:bg-slate-100/70 focus-within:bg-white focus-within:border-[#2563EB] focus-within:ring-2 focus-within:ring-blue-100' }}">
+                    <span id="header-search-icon" class="material-symbols-outlined text-base shrink-0 {{ $isHeroPage ? 'text-white/70' : 'text-slate-400' }}">search</span>
                     <input
                         type="text"
                         id="header-search-input"
                         x-model="searchQuery"
                         @input.debounce.300ms="applyFilter()"
-                        placeholder="Search 500+ gift cards..."
-                        class="w-full bg-transparent border-none outline-none text-xs font-medium placeholder:text-slate-400 {{ $isHeroPage ? 'text-white placeholder:text-slate-300' : 'text-slate-800 placeholder:text-slate-400' }}">
+                        placeholder="Search cards..."
+                        class="w-full bg-transparent border-none outline-none text-[11px] font-medium placeholder:text-slate-400 {{ $isHeroPage ? 'text-white placeholder:text-slate-300' : 'text-slate-800 placeholder:text-slate-400' }}">
                     <button
                         type="button"
                         x-show="searchQuery && searchQuery.length > 0"
@@ -161,13 +161,13 @@
             {{-- Right Controls: Mobile Search, Wishlist, Cart, CTA, Hamburger --}}
             <div class="flex items-center gap-1.5 sm:gap-2.5 lg:gap-3 shrink-0">
 
-                {{-- Mobile Search Trigger Icon (< sm screens) --}}
+                {{-- Mobile Search Trigger Icon (< md screens) --}}
                 <button
                     type="button"
                     id="header-btn-mobile-search"
                     @click="mobileSearchOpen = !mobileSearchOpen; if (mobileSearchOpen) mobileMenuOpen = false;"
                     :class="(mobileMenuOpen || mobileSearchOpen) ? '!text-slate-700' : ''"
-                    class="sm:hidden p-2 rounded-full focus:outline-none transition-colors cursor-pointer {{ $isHeroPage ? 'text-white hover:bg-white/10' : 'text-slate-600 hover:text-[#2563EB] hover:bg-blue-50' }}"
+                    class="md:hidden p-2 rounded-full focus:outline-none transition-colors cursor-pointer {{ $isHeroPage ? 'text-white hover:bg-white/10' : 'text-slate-600 hover:text-[#2563EB] hover:bg-blue-50' }}"
                     title="Search cards"
                     aria-label="Toggle mobile search">
                     <span class="material-symbols-outlined text-2xl" x-text="mobileSearchOpen ? 'close' : 'search'">search</span>
@@ -235,7 +235,7 @@
         x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100 translate-y-0"
         x-transition:leave-end="opacity-0 -translate-y-2"
-        class="sm:hidden bg-white border-b border-slate-200 px-4 py-3 shadow-md">
+        class="md:hidden bg-white border-b border-slate-200 px-4 py-3 shadow-md">
         <form
             action="{{ route('marketplace') }}"
             method="GET"

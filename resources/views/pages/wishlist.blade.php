@@ -72,10 +72,15 @@
 
                                     {{-- Product Info --}}
                                     <div class="col-span-12 sm:col-span-6 flex items-center gap-4">
-                                        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center shrink-0 shadow-sm text-white"
-                                             :class="item.gradient ?? 'from-blue-500 to-blue-600 bg-gradient-to-tr'">
-                                            <span class="material-symbols-outlined text-2xl sm:text-3xl" x-text="item.icon ?? 'card_giftcard'"></span>
-                                        </div>
+                                        <template x-if="item.image">
+                                            <img :src="item.image" :alt="item.name" class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover shrink-0 shadow-sm border border-slate-200">
+                                        </template>
+                                        <template x-if="!item.image">
+                                            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center shrink-0 shadow-sm text-white"
+                                                 :class="item.gradient ?? 'from-blue-500 to-blue-600 bg-gradient-to-tr'">
+                                                <span class="material-symbols-outlined text-2xl sm:text-3xl" x-text="item.icon ?? 'card_giftcard'"></span>
+                                            </div>
+                                        </template>
                                         <div class="min-w-0">
                                             <h3 class="text-sm sm:text-base font-bold text-[#06111E] truncate" x-text="item.name"></h3>
                                             <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider block mt-0.5" x-text="item.brand"></span>

@@ -28,9 +28,19 @@
     --color-error-container: #ffdad6;
 }
 
-/* --- Global Resets & Scrollbar Hide --- */
-::-webkit-scrollbar { display: none; }
-* { -ms-overflow-style: none; scrollbar-width: none; }
+/* --- Global Scrollbar --- */
+html {
+    scrollbar-width: thin;
+    scrollbar-color: #0037b0 #e5eeff;
+}
+html::-webkit-scrollbar { width: 7px; }
+html::-webkit-scrollbar-track { background: #eff4ff; }
+html::-webkit-scrollbar-thumb { background: #0037b0; border-radius: 999px; }
+html::-webkit-scrollbar-thumb:hover { background: #1d4ed8; }
+
+/* --- Hide scrollbar only on elements that explicitly opt-in --- */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 [x-cloak] { display: none !important; }
 

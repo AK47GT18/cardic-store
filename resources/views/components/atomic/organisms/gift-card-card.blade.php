@@ -2,11 +2,11 @@
 
 <div 
     x-data="{ selectedDenom: {{ $card['default_denomination'] }} }"
-    class="group bg-white rounded-2xl p-3 sm:p-4 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between border border-slate-100/90 relative hover:-translate-y-1">
+    class="group bg-white rounded-2xl p-3.5 sm:p-4 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between border border-slate-100/90 relative hover:-translate-y-1">
     
     <div>
         {{-- Brand Visual Header: real image when available, gradient fallback --}}
-        <div class="relative w-full h-28 sm:h-36 rounded-xl overflow-hidden shadow-sm">
+        <div class="relative w-full h-32 sm:h-36 rounded-xl overflow-hidden shadow-sm">
             @if(!empty($card['image']))
                 <img
                     src="{{ asset($card['image']) }}"

@@ -116,8 +116,8 @@
             </div>
         </div>
 
-        {{-- Cards Grid (2 cols on mobile, 2 on md, 3 on lg) --}}
-        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 lg:gap-8">
+        {{-- Cards Grid (1 col on mobile, 2 on sm/md, 3 on lg) --}}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             @foreach(array_slice($cards, 0, 9) as $card)
                 <div
                     data-card-item

@@ -162,7 +162,7 @@
                         </div>
 
                         {{-- Cards Grid (2 Columns on mobile, 2 on md, 3 on xl) --}}
-                        <div class="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 md:gap-6" id="cardsGrid">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6" id="cardsGrid">
                             @foreach($cards as $card)
                                 <div 
                                     data-card-item

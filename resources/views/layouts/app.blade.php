@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
 <head>
     <meta charset="utf-8">
@@ -12,38 +12,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
     
     {{-- Tailwind CSS & Local Alpine.js for resilient performance and instantaneous reactivity --}}
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preload" href="{{ asset('js/alpine.min.js') }}" as="script">
     <script defer src="{{ asset('js/alpine.min.js') }}"></script>
 
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        'primary': '#0037b0',
-                        'primary-container': '#1d4ed8',
-                        'on-primary': '#ffffff',
-                        'tertiary-container': '#006948',
-                        'tertiary-fixed': '#85f8c4',
-                        'on-surface': '#0b1c30',
-                        'on-surface-variant': '#434655',
-                        'surface-container-low': '#eff4ff',
-                        'surface-container': '#e5eeff',
-                        'surface-container-high': '#dce9ff',
-                        'surface-container-lowest': '#ffffff',
-                        'secondary-container': '#dae2fd',
-                        'background': '#f8f9ff',
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        headline: ['Plus Jakarta Sans', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
         [x-cloak] { display: none !important; }

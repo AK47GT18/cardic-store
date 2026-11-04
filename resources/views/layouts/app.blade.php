@@ -11,9 +11,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
     
-    {{-- Tailwind CSS & Alpine.js CDN for standalone resilience and instantaneous reactivity --}}
+    {{-- Tailwind CSS & Local Alpine.js for resilient performance and instantaneous reactivity --}}
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preload" href="{{ asset('js/alpine.min.js') }}" as="script">`r`n    <script defer src="{{ asset('js/alpine.min.js') }}"></script>
+    <link rel="preload" href="{{ asset('js/alpine.min.js') }}" as="script">
+    <script defer src="{{ asset('js/alpine.min.js') }}"></script>
 
     <script>
         tailwind.config = {
@@ -73,9 +74,7 @@
     {{-- Main Global Navigation Header --}}
     <x-atomic.organisms.header />
 
-    {{-- Page View Slot
-         The landing hero manages its own top spacer internally.
-         All other pages get padding-top to clear the fixed header (36 + 64 = 100px). --}}
+    {{-- Page View Slot --}}
     <div class="flex-1">
         {{ $slot }}
     </div>
@@ -138,6 +137,12 @@
                 discountFilter: 'all',
                 minRatingFilter: 'all',
                 sortOrder: '{{ request('sort') ?? 'popular' }}',
+                catalogViewMode: 'grid',
+
+                setCatalogViewMode(mode) {
+                    this.catalogViewMode = mode;
+                    try { localStorage.setItem('cardic_view_mode', mode); } catch (e) {}
+                },
 
                 // Persistent Cart & Wishlist
                 cart: [],
@@ -161,6 +166,11 @@
                     const savedWish = localStorage.getItem('cardic_wishlist');
                     if (savedWish) {
                         try { this.wishlist = JSON.parse(savedWish); } catch (e) {}
+                    }
+                    // Load persistent catalog view mode
+                    const savedView = localStorage.getItem('cardic_view_mode');
+                    if (savedView === 'grid' || savedView === 'list') {
+                        this.catalogViewMode = savedView;
                     }
                 },
 
@@ -194,6 +204,12 @@
                 formatCurrency(amountInUsd) {
                     const converted = parseFloat(amountInUsd) * this.exchangeRate;
                     return `${this.currencySymbol}${converted.toFixed(2)}`;
+                },
+
+                formatMwk(amountInUsd) {
+                    const mwkRate = 1750;
+                    const val = (parseFloat(amountInUsd) || 0) * mwkRate;
+                    return 'MK ' + Math.round(val).toLocaleString();
                 },
 
                 // Cart Actions
@@ -392,4 +408,3 @@
     </script>
 </body>
 </html>
-

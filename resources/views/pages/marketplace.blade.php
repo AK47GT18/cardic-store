@@ -65,10 +65,20 @@
 
                             {{-- Grid / List Layout Switcher --}}
                             <div class="flex items-center bg-[#eff4ff] p-1 rounded-xl border border-slate-200/50">
-                                <button type="button" aria-label="Grid View" class="p-1.5 rounded-lg bg-white text-[#1d4ed8] shadow-xs flex items-center justify-center">
+                                <button 
+                                    type="button" 
+                                    @click="setCatalogViewMode('grid')"
+                                    :class="catalogViewMode === 'grid' ? 'bg-white text-[#1d4ed8] shadow-xs' : 'text-slate-400 hover:text-slate-700'"
+                                    aria-label="Grid View" 
+                                    class="p-1.5 rounded-lg transition-all flex items-center justify-center cursor-pointer">
                                     <span class="material-symbols-outlined text-base">grid_view</span>
                                 </button>
-                                <button type="button" aria-label="List View" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 flex items-center justify-center">
+                                <button 
+                                    type="button" 
+                                    @click="setCatalogViewMode('list')"
+                                    :class="catalogViewMode === 'list' ? 'bg-white text-[#1d4ed8] shadow-xs' : 'text-slate-400 hover:text-slate-700'"
+                                    aria-label="List View" 
+                                    class="p-1.5 rounded-lg transition-all flex items-center justify-center cursor-pointer">
                                     <span class="material-symbols-outlined text-base">view_list</span>
                                 </button>
                             </div>
@@ -161,8 +171,12 @@
                             </span>
                         </div>
 
-                        {{-- Cards Grid (2 Columns on mobile, 2 on md, 3 on xl) --}}
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 max-w-sm sm:max-w-none mx-auto" id="cardsGrid">
+                        {{-- Cards Container (Grid or List depending on catalogViewMode) --}}
+                        <div 
+                            id="cardsGrid"
+                            :class="catalogViewMode === 'list' 
+                                ? 'flex flex-col gap-4 w-full' 
+                                : 'grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 max-w-sm sm:max-w-none mx-auto'">
                             @foreach($cards as $card)
                                 <div 
                                     data-card-item
@@ -172,7 +186,8 @@
                                     data-category="{{ $card['category_id'] }}"
                                     data-region="{{ $card['region_scope'] }}"
                                     data-discount="{{ $card['discount_pct'] }}"
-                                    data-rating="{{ $card['rating'] }}">
+                                    data-rating="{{ $card['rating'] }}"
+                                    :class="catalogViewMode === 'list' ? 'w-full' : ''">
                                     <x-atomic.organisms.gift-card-card :card="$card" />
                                 </div>
                             @endforeach
@@ -228,6 +243,3 @@
         </div>
     </main>
 </x-layouts.app>
-
-
-

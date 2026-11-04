@@ -2,6 +2,8 @@
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
+@source '../../app/**/*.php';
+@source '../../resources/views/**/*.blade.php';
 
 @theme {
     --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
@@ -32,17 +34,20 @@
 html {
     scrollbar-width: thin;
     scrollbar-color: #0037b0 #e5eeff;
+    overflow-x: hidden; /* hide horizontal scrollbar */
 }
-html::-webkit-scrollbar { width: 7px; }
+html::-webkit-scrollbar { width: 10px; }
+html::-webkit-scrollbar:horizontal { display: none; }
 html::-webkit-scrollbar-track { background: #eff4ff; }
-html::-webkit-scrollbar-thumb { background: #0037b0; border-radius: 999px; }
+html::-webkit-scrollbar-thumb { background: #0037b0; border-radius: 999px; border: 2px solid #eff4ff; }
 html::-webkit-scrollbar-thumb:hover { background: #1d4ed8; }
 
-/* --- Hide scrollbar only on elements that explicitly opt-in --- */
+/* --- No scrollbar utility (opt-in per element) --- */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 [x-cloak] { display: none !important; }
+
 
 /* --- Selection Color --- */
 ::selection {
@@ -86,7 +91,3 @@ path[stroke-dasharray] {
 .pt-27 {
     padding-top: 6.75rem; /* 108px = 36px top bar + 72px nav */
 }
-
-/* --- No scrollbar utility --- */
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

@@ -13,7 +13,7 @@
     
     {{-- Tailwind CSS & Alpine.js CDN for standalone resilience and instantaneous reactivity --}}
     <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="preload" href="{{ asset('js/alpine.min.js') }}" as="script">`r`n    <script defer src="{{ asset('js/alpine.min.js') }}"></script>
 
     <script>
         tailwind.config = {

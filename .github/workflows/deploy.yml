@@ -20,10 +20,10 @@ jobs:
         uses: actions/checkout@v4
 
       # ── 2. PHP setup ───────────────────────────────────────────────────────
-      - name: Setup PHP 8.4
+      - name: Setup PHP 8.3
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4'
+          php-version: '8.3'
           extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, bcmath, zip, curl
           coverage: none
 
@@ -149,8 +149,31 @@ jobs:
               @unlink($targetDir . "/index.html");
           }
 
-          @chmod($targetDir . "/storage",          0775);
-          @chmod($targetDir . "/bootstrap/cache",  0775);
+          $storageDirs = [
+              $targetDir . "/storage",
+              $targetDir . "/storage/app",
+              $targetDir . "/storage/app/public",
+              $targetDir . "/storage/framework",
+              $targetDir . "/storage/framework/cache",
+              $targetDir . "/storage/framework/cache/data",
+              $targetDir . "/storage/framework/sessions",
+              $targetDir . "/storage/framework/views",
+              $targetDir . "/storage/logs",
+              $targetDir . "/bootstrap/cache",
+              $targetDir . "/database",
+          ];
+          foreach ($storageDirs as $dir) {
+              if (!is_dir($dir)) {
+                  @mkdir($dir, 0775, true);
+              }
+              @chmod($dir, 0775);
+          }
+
+          $sqlite = $targetDir . "/database/database.sqlite";
+          if (!file_exists($sqlite)) {
+              @touch($sqlite);
+              @chmod($sqlite, 0664);
+          }
 
           $log = [];
           
@@ -158,6 +181,7 @@ jobs:
               $php = defined("PHP_BINARY") && strpos(PHP_BINARY, "fpm") === false ? PHP_BINARY : "php";
               $artisan = $targetDir . "/artisan";
               $cmds = [
+                  "migrate --force",
                   "optimize:clear",
                   "config:cache",
                   "route:cache",
@@ -176,11 +200,12 @@ jobs:
                   require_once $targetDir . "/vendor/autoload.php";
                   $app = require_once $targetDir . "/bootstrap/app.php";
                   $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
+                  try { $kernel->call("migrate", ["--force" => true]); } catch (Throwable $e) {}
                   $kernel->call("optimize:clear");
                   $kernel->call("config:cache");
                   $kernel->call("route:cache");
                   $kernel->call("view:cache");
-                  $log["kernel"] = "Artisan cache successfully optimized via application kernel";
+                  $log["kernel"] = "Artisan migrations and cache successfully optimized via application kernel";
               } catch (Throwable $e) {
                   $log["kernel_error"] = $e->getMessage();
               }

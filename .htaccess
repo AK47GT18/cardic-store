@@ -1,27 +1,24 @@
 <IfModule mod_rewrite.c>
-    <IfModule mod_negotiation.c>
-        Options -MultiViews -Indexes
-    </IfModule>
-
     RewriteEngine On
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
-    # Do not rewrite if already in /public/
-    RewriteCond %{REQUEST_URI} ^/public/ [NC]
-    RewriteRule ^ - [L]
-
-    # Serve deploy_extract.php directly if requested in root
-    RewriteCond %{REQUEST_URI} ^/deploy_extract\.php$ [NC]
-    RewriteRule ^ - [L]
-
-    # Rewrite all other traffic to /public
-    RewriteCond %{REQUEST_FILENAME} !-f
+    # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ public/$1 [L,QSA]
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
 
-    RewriteRule ^$ public/ [L,QSA]
+    # Serve assets from public/ if they exist there
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{DOCUMENT_ROOT}/public/$1 -f
+    RewriteRule ^(.*)$ public/$1 [L]
+
+    # Send all other requests to root index.php
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
 </IfModule>
 
+DirectoryIndex index.php index.html

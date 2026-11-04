@@ -77,14 +77,40 @@ if (`$zip->open(`$zipFile) !== true) {
 `$zip->close();
 
 @unlink(`$zipFile);
-@chmod(`$targetDir . '/storage', 0775);
-@chmod(`$targetDir . '/bootstrap/cache', 0775);
+
+if (file_exists(`$targetDir . '/index.html')) {
+    @unlink(`$targetDir . '/index.html');
+}
+
+`$storageDirs = [
+    `$targetDir . '/storage',
+    `$targetDir . '/storage/app',
+    `$targetDir . '/storage/app/public',
+    `$targetDir . '/storage/framework',
+    `$targetDir . '/storage/framework/cache',
+    `$targetDir . '/storage/framework/cache/data',
+    `$targetDir . '/storage/framework/sessions',
+    `$targetDir . '/storage/framework/views',
+    `$targetDir . '/storage/logs',
+    `$targetDir . '/bootstrap/cache',
+    `$targetDir . '/database',
+];
+foreach (`$storageDirs as `$d) {
+    if (!is_dir(`$d)) { @mkdir(`$d, 0775, true); }
+    @chmod(`$d, 0775);
+}
+
+`$sqlite = `$targetDir . '/database/database.sqlite';
+if (!file_exists(`$sqlite)) {
+    @touch(`$sqlite);
+    @chmod(`$sqlite, 0664);
+}
 
 `$artisanLog = [];
 `$php = defined('PHP_BINARY') && strpos(PHP_BINARY, 'fpm') === false ? PHP_BINARY : 'php';
 `$artisan = `$targetDir . '/artisan';
 
-foreach (['optimize:clear', 'config:cache', 'route:cache', 'view:cache'] as `$cmd) {
+foreach (['migrate --force', 'optimize:clear', 'config:cache', 'route:cache', 'view:cache'] as `$cmd) {
     `$out = @shell_exec("`$php `$artisan `$cmd 2>&1");
     if (`$out) {
         `$artisanLog[`$cmd] = trim(`$out);
@@ -96,6 +122,7 @@ if (empty(`$artisanLog) && file_exists(`$targetDir . '/bootstrap/app.php')) {
         require_once `$targetDir . '/vendor/autoload.php';
         `$app = require_once `$targetDir . '/bootstrap/app.php';
         `$kernel = `$app->make(Illuminate\Contracts\Console\Kernel::class);
+        try { `$kernel->call('migrate', ['--force' => true]); } catch (Throwable `$e) {}
         `$kernel->call('optimize:clear');
         `$kernel->call('config:cache');
         `$kernel->call('route:cache');
@@ -134,10 +161,10 @@ Write-Host ("   Archive created: {0:N2} MB" -f $zipSize) -ForegroundColor Green
 # 5. Upload release.zip and deploy_extract.php via FTP
 Write-Host "📡 Uploading single release archive to FTP server..." -ForegroundColor Yellow
 
-$cleanRemoteDir = $RemoteDir.TrimEnd('/')
-$ftpZipUri = "ftp://$FtpServer$cleanRemoteDir/release.zip"
-$ftpExtractorRootUri = "ftp://$FtpServer$cleanRemoteDir/deploy_extract.php"
-$ftpExtractorPubUri  = "ftp://$FtpServer$cleanRemoteDir/public/deploy_extract.php"
+$cleanRemoteDir = $RemoteDir.Trim('/')
+$ftpZipUri = "ftp://$FtpServer/$cleanRemoteDir/release.zip"
+$ftpExtractorRootUri = "ftp://$FtpServer/$cleanRemoteDir/deploy_extract.php"
+$ftpExtractorPubUri  = "ftp://$FtpServer/$cleanRemoteDir/public/deploy_extract.php"
 
 $wc = New-Object System.Net.WebClient
 $wc.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPass)

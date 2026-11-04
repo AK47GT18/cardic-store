@@ -1,0 +1,246 @@
+name: 🚀 Fast Zip & Unzip Deploy
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+concurrency:
+  group: production-deployment
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Build, Zip & Fast Extract
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout ────────────────────────────────────────────────────────
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # ── 2. PHP setup ───────────────────────────────────────────────────────
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, bcmath, zip, curl
+          coverage: none
+
+      # ── 3. Node / Vite ─────────────────────────────────────────────────────
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install JS Dependencies & Build Assets
+        run: |
+          npm ci
+          npm run build
+
+      # ── 4. Composer (production, no dev) ───────────────────────────────────
+      - name: Install PHP Dependencies
+        run: |
+          composer install \
+            --no-dev \
+            --prefer-dist \
+            --optimize-autoloader \
+            --no-interaction \
+            --no-progress \
+            --no-scripts
+
+      # ── 5. Stamp a production .env onto the archive ────────────────────────
+      #    We write it to .env so it lands on the server.
+      #    APP_KEY and DB_PASSWORD come from GitHub Secrets.
+      - name: Write Production .env
+        run: |
+          cat > .env << 'ENVEOF'
+          APP_NAME="Cardic Store"
+          APP_ENV=production
+          APP_KEY=${{ secrets.APP_KEY }}
+          APP_DEBUG=false
+          APP_URL=https://cardicstore.com
+
+          APP_LOCALE=en
+          APP_FALLBACK_LOCALE=en
+
+          APP_MAINTENANCE_DRIVER=file
+
+          BCRYPT_ROUNDS=12
+
+          LOG_CHANNEL=stack
+          LOG_STACK=single
+          LOG_DEPRECATIONS_CHANNEL=null
+          LOG_LEVEL=error
+
+          DB_CONNECTION=sqlite
+
+          SESSION_DRIVER=file
+          SESSION_LIFETIME=120
+          SESSION_ENCRYPT=false
+          SESSION_PATH=/
+          SESSION_DOMAIN=null
+
+          BROADCAST_CONNECTION=log
+          FILESYSTEM_DISK=local
+          QUEUE_CONNECTION=sync
+
+          CACHE_STORE=file
+
+          MAIL_MAILER=log
+          ENVEOF
+
+      # ── 6. Build self-destructing extractor script ─────────────────────────
+      - name: Build deploy_extract.php
+        run: |
+          # Unique single-use token; generated fresh every deploy
+          DEPLOY_TOKEN="${{ secrets.DEPLOY_SECRET }}_$(date +%s%N | sha256sum | head -c 24)"
+          echo "DEPLOY_TOKEN=$DEPLOY_TOKEN" >> $GITHUB_ENV
+
+          mkdir -p public
+
+          # Write the PHP extractor using printf so no heredoc quoting issues
+          printf '%s' '<?php
+          header("Content-Type: application/json");
+          ini_set("max_execution_time", 300);
+          ini_set("memory_limit", "256M");
+
+          $expectedToken = "'"$DEPLOY_TOKEN"'";
+          $givenToken    = $_GET["token"] ?? $_SERVER["HTTP_X_DEPLOY_TOKEN"] ?? "";
+
+          if (!$expectedToken || !hash_equals($expectedToken, $givenToken)) {
+              http_response_code(403);
+              echo json_encode(["success" => false, "error" => "Unauthorized"]);
+              exit;
+          }
+
+          // Locate the zip (uploaded next to public/ or inside public/)
+          $candidates = [
+              dirname(__DIR__) . "/release.zip",
+              __DIR__ . "/release.zip",
+          ];
+
+          $zipFile = null;
+          foreach ($candidates as $c) {
+              if (file_exists($c)) { $zipFile = $c; break; }
+          }
+
+          if (!$zipFile) {
+              http_response_code(404);
+              echo json_encode(["success" => false, "error" => "release.zip not found", "searched" => $candidates]);
+              exit;
+          }
+
+          // Extract to the Laravel root (parent of public/)
+          $targetDir = realpath(dirname(__DIR__));
+
+          $zip = new ZipArchive();
+          if ($zip->open($zipFile) !== true) {
+              http_response_code(500);
+              echo json_encode(["success" => false, "error" => "Cannot open zip"]);
+              exit;
+          }
+
+          $count = $zip->numFiles;
+          $zip->extractTo($targetDir);
+          $zip->close();
+
+          @unlink($zipFile);
+
+          // Fix permissions
+          @chmod($targetDir . "/storage",          0775);
+          @chmod($targetDir . "/bootstrap/cache",  0775);
+
+          // Laravel post-deploy commands via artisan
+          $log = [];
+          $artisan = $targetDir . "/artisan";
+          $php     = PHP_BINARY;
+          $cmds = [
+              "optimize:clear",
+              "config:cache",
+              "route:cache",
+              "view:cache",
+              "migrate --force",
+          ];
+          foreach ($cmds as $cmd) {
+              $out = shell_exec("$php $artisan $cmd 2>&1");
+              $log[$cmd] = trim($out);
+          }
+
+          // Self-destruct
+          @unlink(__FILE__);
+
+          echo json_encode([
+              "success"         => true,
+              "files_extracted" => $count,
+              "target_dir"      => $targetDir,
+              "artisan"         => $log,
+              "deployed_at"     => date("Y-m-d H:i:s T"),
+          ]);
+          ' > public/deploy_extract.php
+
+          echo "✅ Extractor written (token embedded, file=$(wc -c < public/deploy_extract.php) bytes)"
+
+      # ── 7. Package everything into one archive ─────────────────────────────
+      - name: Create release.zip
+        run: |
+          zip -r release.zip . \
+            --exclude "*.git/*" \
+            --exclude ".github/*" \
+            --exclude "node_modules/*" \
+            --exclude "tests/*" \
+            --exclude "storage/logs/*" \
+            --exclude "storage/framework/cache/*" \
+            --exclude "storage/framework/sessions/*" \
+            --exclude "storage/framework/views/*" \
+            --exclude ".phpunit.result.cache" \
+            --exclude "*.tmp" \
+            --exclude "deploy.ps1"
+
+          echo "📦 Archive size: $(du -sh release.zip | cut -f1)"
+
+      # ── 8. Upload ONLY the two new files via FTP ───────────────────────────
+      #    SamKirkland/FTP-Deploy-Action uploads what is in local-dir.
+      #    We stage only the two files in a tmp dir to keep it precise.
+      - name: Stage files for FTP upload
+        run: |
+          mkdir -p ftp_stage/public
+          cp release.zip             ftp_stage/release.zip
+          cp public/deploy_extract.php ftp_stage/public/deploy_extract.php
+
+      - name: Upload via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ftp_stage/
+          server-dir: ${{ secrets.REMOTE_PATH }}
+          dangerous-clean-slate: false
+
+      # ── 9. Trigger extraction on the live server ───────────────────────────
+      - name: Trigger Server-Side Extraction
+        run: |
+          APP_URL="${{ secrets.APP_URL }}"
+          EXTRACT_URL="$APP_URL/deploy_extract.php?token=$DEPLOY_TOKEN"
+          echo "⚡ Calling: $EXTRACT_URL"
+
+          for i in 1 2 3 4 5; do
+            RESPONSE=$(curl -ksS --max-time 90 "$EXTRACT_URL" 2>&1) || true
+            echo "Attempt $i → $RESPONSE"
+
+            if echo "$RESPONSE" | grep -q '"success":true'; then
+              echo ""
+              echo "✅ Deployment complete — files extracted & caches warmed!"
+              exit 0
+            fi
+
+            echo "Waiting 5s before retry..."
+            sleep 5
+          done
+
+          echo "⚠️  Auto-extraction did not confirm in time."
+          echo "    The release.zip is on the server. You can manually visit:"
+          echo "    $EXTRACT_URL"
+          exit 1

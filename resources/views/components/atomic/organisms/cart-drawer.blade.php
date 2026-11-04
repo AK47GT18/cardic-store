@@ -115,37 +115,6 @@
                         <span class="font-medium">Sub-60s Delivery: <strong>Instant Email & Encrypted Keys</strong></span>
                     </div>
 
-                    {{-- Payment Method Selection --}}
-                    <div>
-                        <label class="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-2">Select Payment Method:</label>
-                        <div class="grid grid-cols-3 gap-2">
-                            <button 
-                                type="button" 
-                                @click="paymentMethod = 'card'"
-                                :class="paymentMethod === 'card' ? 'border-[#1d4ed8] bg-blue-50 text-[#1d4ed8] font-bold' : 'border-slate-200 bg-white text-slate-700'"
-                                class="p-2 rounded-xl border text-xs flex flex-col items-center justify-center gap-1 transition-all cursor-pointer">
-                                <span class="material-symbols-outlined text-base">credit_card</span>
-                                <span class="text-[10px]">Card (Stripe)</span>
-                            </button>
-                            <button 
-                                type="button" 
-                                @click="paymentMethod = 'crypto'"
-                                :class="paymentMethod === 'crypto' ? 'border-[#1d4ed8] bg-blue-50 text-[#1d4ed8] font-bold' : 'border-slate-200 bg-white text-slate-700'"
-                                class="p-2 rounded-xl border text-xs flex flex-col items-center justify-center gap-1 transition-all cursor-pointer">
-                                <span class="material-symbols-outlined text-base text-amber-500">currency_bitcoin</span>
-                                <span class="text-[10px]">Crypto (USDT/BTC)</span>
-                            </button>
-                            <button 
-                                type="button" 
-                                @click="paymentMethod = 'paypal'"
-                                :class="paymentMethod === 'paypal' ? 'border-[#1d4ed8] bg-blue-50 text-[#1d4ed8] font-bold' : 'border-slate-200 bg-white text-slate-700'"
-                                class="p-2 rounded-xl border text-xs flex flex-col items-center justify-center gap-1 transition-all cursor-pointer">
-                                <span class="material-symbols-outlined text-base text-blue-500">account_balance_wallet</span>
-                                <span class="text-[10px]">PayPal</span>
-                            </button>
-                        </div>
-                    </div>
-
                     {{-- Customer Email --}}
                     <div>
                         <label class="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Fulfillment Email:</label>

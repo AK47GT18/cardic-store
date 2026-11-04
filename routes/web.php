@@ -35,8 +35,9 @@ Route::get('/about', [MarketplaceController::class, 'about'])->name('about');
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::post('/api/contact', [ContactController::class, 'submit'])->name('contact.submit');
 
-// Dedicated Cart Page
+// Dedicated Cart & Wishlist Pages
 Route::get('/cart', [CartController::class, 'index'])->name('cart');
+Route::get('/wishlist', [MarketplaceController::class, 'wishlist'])->name('wishlist');
 
 // Cart & Instant Checkout API
 Route::post('/api/checkout', [CartController::class, 'checkout'])->name('checkout');

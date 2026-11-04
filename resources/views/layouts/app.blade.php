@@ -101,6 +101,7 @@
                 openWishlist: false,
                 receiptModalOpen: false,
                 mobileMenuOpen: false,
+                mobileSearchOpen: false,
                 isCheckingOut: false,
 
                 // Checkout State

@@ -1,6 +1,6 @@
 <x-layouts.app title="Privacy Policy & Cookies — Cardic Store">
 
-    <div class="bg-[#F8FAFC] text-[#0F172A] min-h-screen pt-24 sm:pt-28">
+    <div class="bg-[#F8FAFC] text-[#0F172A] min-h-screen pt-28 sm:pt-32">
 
         {{-- ── PAGE HEADER ── --}}
         <div class="bg-[#06111E] text-white py-14 sm:py-20 relative overflow-hidden">

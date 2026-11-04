@@ -33,6 +33,7 @@
         }
     },
     "scripts": {
+        "deploy": "powershell -ExecutionPolicy Bypass -File ./deploy.ps1",
         "setup": [
             "composer install",
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",

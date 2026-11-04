@@ -159,12 +159,13 @@
                         </ul>
                     </div>
 
-                    {{-- Column 3: Career / Marketplace --}}
+                    {{-- Column 3: Quick Shop / Cart / Wishlist --}}
                     <div>
-                        <h4 class="text-sm font-bold text-slate-900 mb-4 tracking-tight">Career</h4>
+                        <h4 class="text-sm font-bold text-slate-900 mb-4 tracking-tight">Quick Shop</h4>
                         <ul class="space-y-3 text-xs sm:text-sm text-slate-500">
-                            <li><a href="#" class="hover:text-slate-900 transition-colors">Jobs</a></li>
-                            <li><a href="{{ route('home') }}#products" class="hover:text-slate-900 transition-colors">Catalog</a></li>
+                            <li><a href="{{ route('marketplace') }}" class="hover:text-slate-900 transition-colors">All Cards</a></li>
+                            <li><a href="{{ route('wishlist') }}" class="hover:text-slate-900 transition-colors">My Wishlist</a></li>
+                            <li><a href="{{ route('cart') }}" class="hover:text-slate-900 transition-colors">Shopping Cart</a></li>
                             <li><a href="{{ route('how-it-works') }}" class="hover:text-slate-900 transition-colors">Escrow Hub</a></li>
                         </ul>
                     </div>

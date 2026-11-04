@@ -1,20 +1,21 @@
 <x-layouts.app title="Shopping Cart — Cardic Store">
 
-    <div class="bg-[#F8FAFC] text-[#0F172A] min-h-screen pt-24 sm:pt-28">
+    <div class="bg-[#F8FAFC] text-[#0F172A] min-h-screen pt-28 sm:pt-32">
 
-        {{-- ── PAGE HEADER ── --}}
-        <div class="bg-white border-b border-slate-100 shadow-sm">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-                <h1 class="font-headline font-black text-2xl sm:text-3xl text-[#06111E]">Shopping Cart</h1>
-                <nav class="flex items-center gap-1.5 mt-1.5 text-xs text-slate-400 font-medium">
-                    <a href="{{ route('home') }}" class="hover:text-[#2563EB] transition-colors">Home</a>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+            {{-- ── Blended Breadcrumbs & Heading ── --}}
+            <div class="mb-6 sm:mb-8">
+                <nav class="flex items-center gap-1.5 text-xs text-slate-500 mb-2">
+                    <a href="{{ route('home') }}" class="hover:text-[#2563EB] transition-colors flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">home</span>
+                        <span>Home</span>
+                    </a>
                     <span class="material-symbols-outlined text-xs text-slate-300">chevron_right</span>
-                    <span class="text-slate-600">Shopping Cart</span>
+                    <span class="text-[#06111E] font-semibold">Shopping Cart</span>
                 </nav>
+                <h1 class="font-headline font-black text-2xl sm:text-4xl text-[#06111E] tracking-tight">Shopping Cart</h1>
             </div>
-        </div>
-
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
 
             {{-- ── EMPTY STATE (Alpine-driven) ── --}}
             <template x-if="cart.length === 0">
@@ -39,9 +40,10 @@
                     {{-- ── LEFT: Cart Table ── --}}
                     <div class="lg:col-span-8 space-y-4">
 
-                        {{-- Table Header (desktop only) --}}
-                        <div class="hidden sm:grid grid-cols-12 gap-4 px-4 py-2.5 text-[11px] font-bold uppercase tracking-widest text-slate-400 border-b border-slate-200 bg-white rounded-t-2xl">
-                            <div class="col-span-5">Product</div>
+                        {{-- Table Header (desktop only, blends seamlessly into #F8FAFC) --}}
+                        <div class="hidden sm:grid grid-cols-12 gap-4 px-5 py-2 text-[11px] font-bold uppercase tracking-widest text-slate-400">
+                            <div class="col-span-1"></div>
+                            <div class="col-span-4">Product</div>
                             <div class="col-span-2 text-center">Price</div>
                             <div class="col-span-3 text-center">Quantity</div>
                             <div class="col-span-2 text-right">Subtotal</div>
@@ -137,37 +139,6 @@
                             </button>
                         </div>
 
-                        {{-- ── 3 Assurance Pills ── --}}
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
-                            <div class="bg-white border border-slate-100 rounded-2xl p-4 flex items-start gap-3 shadow-xs">
-                                <div class="w-9 h-9 rounded-xl bg-blue-50 text-[#2563EB] flex items-center justify-center shrink-0">
-                                    <span class="material-symbols-outlined text-base">bolt</span>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-bold text-[#06111E]">Instant Digital Delivery</p>
-                                    <p class="text-[11px] text-slate-400 mt-0.5 leading-snug">Encrypted codes sent to your email under 60 seconds.</p>
-                                </div>
-                            </div>
-                            <div class="bg-white border border-slate-100 rounded-2xl p-4 flex items-start gap-3 shadow-xs">
-                                <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                                    <span class="material-symbols-outlined text-base">verified_user</span>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-bold text-[#06111E]">Zero Bank Restrictions</p>
-                                    <p class="text-[11px] text-slate-400 mt-0.5 leading-snug">No foreign transaction flags or card limits apply.</p>
-                                </div>
-                            </div>
-                            <div class="bg-white border border-slate-100 rounded-2xl p-4 flex items-start gap-3 shadow-xs">
-                                <div class="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center shrink-0">
-                                    <span class="material-symbols-outlined text-base">support_agent</span>
-                                </div>
-                                <div>
-                                    <p class="text-xs font-bold text-[#06111E]">24/7 Escrow Protection</p>
-                                    <p class="text-[11px] text-slate-400 mt-0.5 leading-snug">Full warranty on every code. Auto-refund on failure.</p>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
 
                     {{-- ── RIGHT: Order Summary ── --}}
@@ -214,37 +185,6 @@
                                 <p class="text-[10px] text-slate-400 mt-1.5 leading-snug">Your verified gift card codes will be sent to this address within 60 seconds of payment.</p>
                             </div>
 
-                            {{-- Payment Method --}}
-                            <div>
-                                <label class="text-[11px] font-bold uppercase tracking-widest text-slate-400 block mb-2">Payment Method</label>
-                                <div class="grid grid-cols-3 gap-2">
-                                    <button
-                                        type="button"
-                                        @click="paymentMethod = 'card'"
-                                        :class="paymentMethod === 'card' ? 'border-[#2563EB] bg-blue-50 text-[#2563EB] font-bold shadow-sm' : 'border-slate-200 bg-white text-slate-600'"
-                                        class="p-2.5 rounded-xl border text-[10px] flex flex-col items-center gap-1 transition-all cursor-pointer">
-                                        <span class="material-symbols-outlined text-base">credit_card</span>
-                                        Card
-                                    </button>
-                                    <button
-                                        type="button"
-                                        @click="paymentMethod = 'crypto'"
-                                        :class="paymentMethod === 'crypto' ? 'border-[#2563EB] bg-blue-50 text-[#2563EB] font-bold shadow-sm' : 'border-slate-200 bg-white text-slate-600'"
-                                        class="p-2.5 rounded-xl border text-[10px] flex flex-col items-center gap-1 transition-all cursor-pointer">
-                                        <span class="material-symbols-outlined text-base">currency_bitcoin</span>
-                                        Crypto
-                                    </button>
-                                    <button
-                                        type="button"
-                                        @click="paymentMethod = 'paypal'"
-                                        :class="paymentMethod === 'paypal' ? 'border-[#2563EB] bg-blue-50 text-[#2563EB] font-bold shadow-sm' : 'border-slate-200 bg-white text-slate-600'"
-                                        class="p-2.5 rounded-xl border text-[10px] flex flex-col items-center gap-1 transition-all cursor-pointer">
-                                        <span class="material-symbols-outlined text-base">account_balance_wallet</span>
-                                        PayPal
-                                    </button>
-                                </div>
-                            </div>
-
                             {{-- Checkout CTA --}}
                             <button
                                 type="button"
@@ -272,4 +212,3 @@
     </div>
 
 </x-layouts.app>
-

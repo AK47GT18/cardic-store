@@ -109,6 +109,14 @@ class MarketplaceController extends Controller
     }
 
     /**
+     * Dedicated Wishlist Page.
+     */
+    public function wishlist()
+    {
+        return view('pages.wishlist');
+    }
+
+    /**
      * Dedicated About Us Page designed from Reference Template 1.
      */
     public function about()

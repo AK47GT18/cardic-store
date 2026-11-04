@@ -1,7 +1,6 @@
 {{-- ============================================================
-     HERO — Full-bleed background · naturally spaced headline & text ·
-     3-card real image split with silky-smooth animated transitions
-     (no badges, clean images only, well-spaced typography)
+     HERO — Expansive Height · Borderless · Smooth Ambient Background ·
+     3-Card Animated Brand Showcase
      ============================================================ --}}
 
 <script>
@@ -45,13 +44,13 @@
 </script>
 
 <section
-    class="relative w-full overflow-hidden bg-[#060F1E] flex flex-col justify-between"
-    style="min-height: 100svh;"
+    class="relative w-full overflow-hidden bg-[#060F1E] flex flex-col justify-between border-0 border-none"
+    style="min-height: 86vh; border-bottom: none;"
     x-data="heroCardShowcase()"
     x-init="init()">
 
     {{-- ── Full-bleed Atmospheric Background ──────────────────── --}}
-    <div class="absolute inset-0 z-0">
+    <div class="absolute inset-0 z-0 pointer-events-none">
         <img
             src="{{ asset('images/giftcard.jpg') }}"
             alt="Gift cards background"
@@ -62,36 +61,36 @@
         <div class="absolute inset-0" style="background: linear-gradient(105deg, rgba(6,15,30,0.98) 0%, rgba(6,15,30,0.80) 45%, rgba(6,15,30,0.20) 100%);"></div>
 
         {{-- Deep dark fade at bottom --}}
-        <div class="absolute bottom-0 left-0 right-0 h-48" style="background: linear-gradient(to top, #060F1E 0%, transparent 100%);"></div>
+        <div class="absolute bottom-0 left-0 right-0 h-44" style="background: linear-gradient(to top, #060F1E 0%, transparent 100%);"></div>
 
         {{-- Ambient blue glow --}}
-        <div class="absolute -top-32 -left-32 w-[650px] h-[650px] pointer-events-none" style="background: radial-gradient(circle, rgba(37,99,235,0.16) 0%, transparent 70%);"></div>
+        <div class="absolute -top-32 -left-32 w-[650px] h-[650px]" style="background: radial-gradient(circle, rgba(37,99,235,0.16) 0%, transparent 70%);"></div>
     </div>
 
-    {{-- ── Nav Spacer (Matches sleek h-14 sm:h-16 nav + h-8 topbar) ── --}}
-    <div class="h-20 sm:h-24 shrink-0"></div>
+    {{-- ── Nav Spacer (Comfortable height to clear top nav) ────── --}}
+    <div class="h-24 sm:h-28 shrink-0"></div>
 
-    {{-- ── Main Hero Content Area (Well-Spaced) ─────────────────── --}}
-    <div class="relative z-10 w-full max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-12 my-auto py-12 lg:py-20">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-14 lg:gap-16 items-center">
+    {{-- ── Main Hero Content Area (Expansive & Generous Height) ─ --}}
+    <div class="relative z-10 w-full max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-12 my-auto py-12 sm:py-16 lg:py-24">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
 
-            {{-- ── LEFT: Text Spread Out & Well-Spaced ─────────────── --}}
-            <div class="lg:col-span-7 xl:col-span-7">
+            {{-- ── LEFT: Typography & CTAs ────────────────────────── --}}
+            <div class="col-span-12 lg:col-span-7 xl:col-span-7">
 
-                {{-- Headline with comfortable leading & character spacing --}}
+                {{-- Headline --}}
                 <h1 class="font-headline font-black text-white tracking-normal leading-[1.12] sm:leading-[1.14] text-4xl sm:text-6xl lg:text-7xl">
                     Buy Gift Cards at the Best <span class="text-[#38BDF8]">Discounts.</span>
                 </h1>
 
-                {{-- Generously spaced subcopy --}}
-                <p class="mt-8 text-slate-300 text-base sm:text-lg lg:text-xl font-normal leading-[1.7] max-w-2xl">
+                {{-- Subcopy --}}
+                <p class="mt-6 sm:mt-8 text-slate-300 text-base sm:text-lg lg:text-xl font-normal leading-[1.7] max-w-2xl">
                     The modern escrow-backed marketplace for 500+ verified brands. Buy digital gift codes with up to <strong class="text-white font-semibold">12% instant savings</strong>, authenticated and delivered to your inbox in seconds.
                 </p>
 
-                {{-- Clean primary action button (Sleek, balanced size) --}}
-                <div class="mt-10 flex items-center gap-5 flex-wrap">
+                {{-- Primary CTA button & badge --}}
+                <div class="mt-8 sm:mt-10 flex items-center gap-5 flex-wrap">
                     <a href="#products"
-                       class="inline-flex items-center gap-2 bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-sm px-6 py-3 rounded-full transition-all duration-200 active:scale-95 shadow-md group">
+                       class="inline-flex items-center gap-2 bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-sm px-7 py-3.5 rounded-full transition-all duration-200 active:scale-95 shadow-lg group cursor-pointer">
                         <span>Browse Gift Cards</span>
                         <span class="material-symbols-outlined text-base transition-transform group-hover:translate-x-1">arrow_forward</span>
                     </a>
@@ -103,7 +102,7 @@
                 </div>
 
                 {{-- Quick Popular Brands --}}
-                <div class="mt-12 flex items-center gap-3 text-xs sm:text-sm text-slate-400 flex-wrap">
+                <div class="mt-10 sm:mt-12 flex items-center gap-3 text-xs sm:text-sm text-slate-400 flex-wrap">
                     <span class="font-bold text-slate-500 uppercase tracking-wider text-xs">Trending:</span>
                     <span class="bg-white/8 hover:bg-white/14 px-3.5 py-1.5 rounded-full border border-white/10 text-white font-semibold transition-colors">Amazon</span>
                     <span class="bg-white/8 hover:bg-white/14 px-3.5 py-1.5 rounded-full border border-white/10 text-white font-semibold transition-colors">Apple</span>
@@ -113,8 +112,8 @@
 
             </div>
 
-            {{-- ── RIGHT: Animated 3-Card Real Image Showcase ── --}}
-            <div class="lg:col-span-5 xl:col-span-5 flex justify-center lg:justify-end">
+            {{-- ── RIGHT: Animated 3-Card Showcase (Hidden on Mobile, Displayed on Desktop) ── --}}
+            <div class="hidden lg:flex lg:col-span-5 xl:col-span-5 justify-center lg:justify-end">
                 <div class="relative w-full max-w-[500px] h-[380px] sm:h-[440px] flex items-center justify-center">
 
                     {{-- Smooth animated container with fade & slight scale during transitions --}}

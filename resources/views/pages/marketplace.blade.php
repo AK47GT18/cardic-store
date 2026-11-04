@@ -1,7 +1,7 @@
 <x-layouts.app title="Cardic Store — International Gift Card Marketplace">
 
     {{-- Main Marketplace Catalog Container --}}
-    <main class="w-full bg-[#f8f9ff] min-h-screen pt-24 sm:pt-28">
+    <main class="w-full bg-[#f8f9ff] min-h-screen pt-28 sm:pt-32">
         <div class="relative w-full overflow-hidden">
             {{-- Ambient Decorative Glow Elements --}}
             <div class="absolute -top-32 right-1/4 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl pointer-events-none"></div>

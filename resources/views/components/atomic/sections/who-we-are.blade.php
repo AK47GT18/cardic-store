@@ -57,7 +57,7 @@
             <div class="lg:col-span-7 relative">
                 <div class="relative h-[380px] sm:h-[450px] rounded-3xl overflow-hidden shadow-xl border border-slate-200">
                     <img 
-                        src="{{ asset('images/apple.jpg') }}" 
+                        src="{{ asset('images/buying things.jpg') }}" 
                         alt="Digital gift card verified stock" 
                         class="w-full h-full object-cover">
 

@@ -58,8 +58,8 @@
 
             {{-- Thumbnail Card 3 --}}
             <div class="bg-black/50 backdrop-blur-xl border border-white/20 p-4 rounded-2xl flex items-center gap-3.5 shadow-xl">
-                <div class="w-14 h-14 rounded-xl overflow-hidden bg-slate-700 shrink-0">
-                    <img src="{{ asset('images/spotify.jpg') }}" alt="Payment options" class="w-full h-full object-cover">
+                <div class="w-14 h-14 rounded-xl overflow-hidden bg-[#1DB954] shrink-0 flex items-center justify-center p-2">
+                    <img src="{{ asset('images/logos/spotify-logo.svg') }}" alt="Spotify" class="w-full h-full object-contain">
                 </div>
                 <div>
                     <div class="text-xs font-bold text-white leading-tight">Flexible Payment Methods</div>

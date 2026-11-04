@@ -45,7 +45,7 @@
 
 <section
     class="relative w-full overflow-hidden bg-[#060F1E] flex flex-col justify-between border-0 border-none"
-    style="min-height: 86vh; border-bottom: none;"
+    style="min-height: min(86vh, 100dvh);"
     x-data="heroCardShowcase()"
     x-init="init()">
 
@@ -71,24 +71,24 @@
     <div class="h-24 sm:h-28 shrink-0"></div>
 
     {{-- ── Main Hero Content Area (Expansive & Generous Height) ─ --}}
-    <div class="relative z-10 w-full max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-12 my-auto py-12 sm:py-16 lg:py-24">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+    <div class="relative z-10 w-full max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-12 my-auto py-10 sm:py-16 lg:py-24">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
 
             {{-- ── LEFT: Typography & CTAs ────────────────────────── --}}
             <div class="col-span-12 lg:col-span-7 xl:col-span-7">
 
                 {{-- Headline --}}
-                <h1 class="font-headline font-black text-white tracking-normal leading-[1.12] sm:leading-[1.14] text-4xl sm:text-6xl lg:text-7xl">
+                <h1 class="font-headline font-black text-white tracking-normal leading-[1.12] sm:leading-[1.14] text-[2rem] sm:text-6xl lg:text-7xl">
                     Buy Gift Cards at the Best <span class="text-[#38BDF8]">Discounts.</span>
                 </h1>
 
                 {{-- Subcopy --}}
-                <p class="mt-6 sm:mt-8 text-slate-300 text-base sm:text-lg lg:text-xl font-normal leading-[1.7] max-w-2xl">
+                <p class="mt-5 sm:mt-8 text-slate-300 text-sm sm:text-lg lg:text-xl font-normal leading-[1.7] max-w-2xl">
                     The modern escrow-backed marketplace for 500+ verified brands. Buy digital gift codes with up to <strong class="text-white font-semibold">12% instant savings</strong>, authenticated and delivered to your inbox in seconds.
                 </p>
 
                 {{-- Primary CTA button & badge --}}
-                <div class="mt-8 sm:mt-10 flex items-center gap-5 flex-wrap">
+                <div class="mt-7 sm:mt-10 flex items-center gap-4 flex-wrap">
                     <a href="#products"
                        class="inline-flex items-center gap-2 bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-sm px-7 py-3.5 rounded-full transition-all duration-200 active:scale-95 shadow-lg group cursor-pointer">
                         <span>Browse Gift Cards</span>
@@ -102,7 +102,7 @@
                 </div>
 
                 {{-- Quick Popular Brands --}}
-                <div class="mt-10 sm:mt-12 flex items-center gap-3 text-xs sm:text-sm text-slate-400 flex-wrap">
+                <div class="mt-8 sm:mt-12 flex items-center gap-3 text-xs sm:text-sm text-slate-400 flex-wrap">
                     <span class="font-bold text-slate-500 uppercase tracking-wider text-xs">Trending:</span>
                     <span class="bg-white/8 hover:bg-white/14 px-3.5 py-1.5 rounded-full border border-white/10 text-white font-semibold transition-colors">Amazon</span>
                     <span class="bg-white/8 hover:bg-white/14 px-3.5 py-1.5 rounded-full border border-white/10 text-white font-semibold transition-colors">Apple</span>

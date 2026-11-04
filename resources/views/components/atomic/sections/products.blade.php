@@ -24,7 +24,7 @@
             {{-- Pillar 1: Gaming & Digital Codes --}}
             <div class="relative h-[360px] rounded-3xl overflow-hidden shadow-md group cursor-pointer">
                 <img 
-                    src="{{ asset('images/steam.jpg') }}" 
+                    src="{{ asset('images/gaming.jpg') }}" 
                     alt="Gaming gift cards" 
                     class="w-full h-full object-cover brightness-[0.55] group-hover:scale-105 transition-transform duration-500">
                 <div class="absolute inset-0 bg-gradient-to-t from-[#091524] via-transparent to-transparent"></div>
@@ -41,7 +41,7 @@
             {{-- Pillar 2: Retail & Shopping --}}
             <div class="relative h-[360px] rounded-3xl overflow-hidden shadow-md group cursor-pointer">
                 <img 
-                    src="{{ asset('images/amazon.jpg') }}" 
+                    src="{{ asset('images/retail.jpg') }}" 
                     alt="Retail shopping cards" 
                     class="w-full h-full object-cover brightness-[0.55] group-hover:scale-105 transition-transform duration-500">
                 <div class="absolute inset-0 bg-gradient-to-t from-[#091524] via-transparent to-transparent"></div>
@@ -58,7 +58,7 @@
             {{-- Pillar 3: Streaming & Cloud Services --}}
             <div class="relative h-[360px] rounded-3xl overflow-hidden shadow-md group cursor-pointer">
                 <img 
-                    src="{{ asset('images/netflix.jpg') }}" 
+                    src="{{ asset('images/stream.jpg') }}" 
                     alt="Streaming and tech cards" 
                     class="w-full h-full object-cover brightness-[0.55] group-hover:scale-105 transition-transform duration-500">
                 <div class="absolute inset-0 bg-gradient-to-t from-[#091524] via-transparent to-transparent"></div>

@@ -8,8 +8,9 @@ use App\Http\Controllers\MarketplaceController;
 use App\Http\Controllers\SellTradeController;
 use Illuminate\Support\Facades\Route;
 
-// Main Landing Page (designed from Reference Image 1 & Brand Logo Image 2)
+// Main Landing Page
 Route::get('/', [MarketplaceController::class, 'landing'])->name('home');
+Route::redirect('/home', '/');
 
 // Full Marketplace Catalog with Sidebar Filters
 Route::get('/marketplace', [MarketplaceController::class, 'index'])->name('marketplace');

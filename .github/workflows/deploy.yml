@@ -144,9 +144,21 @@ jobs:
 
           @unlink($zipFile);
 
-          // Remove default DirectAdmin / cPanel coming-soon index.html so LiteSpeed serves index.php
-          if (file_exists($targetDir . "/index.html")) {
-              @unlink($targetDir . "/index.html");
+          // Remove default DirectAdmin / cPanel coming-soon placeholder files so LiteSpeed serves index.php
+          $stalePlaceholders = [
+              $targetDir . "/index.html",
+              $targetDir . "/index.htm",
+              $targetDir . "/default.html",
+              $targetDir . "/placeholder.html",
+              $targetDir . "/coming-soon.html",
+              $targetDir . "/public/index.html",
+              $targetDir . "/public/index.htm",
+              $targetDir . "/public/default.html",
+          ];
+          foreach ($stalePlaceholders as $stale) {
+              if (file_exists($stale)) {
+                  @unlink($stale);
+              }
           }
 
           $storageDirs = [

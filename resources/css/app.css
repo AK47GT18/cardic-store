@@ -1,0 +1,82 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-headline: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+
+    /* Cardic Brand Color Design Tokens */
+    --color-primary: #0037b0;
+    --color-primary-container: #1d4ed8;
+    --color-on-primary: #ffffff;
+    --color-surface: #f8f9ff;
+    --color-surface-container-lowest: #ffffff;
+    --color-surface-container-low: #eff4ff;
+    --color-surface-container: #e5eeff;
+    --color-surface-container-high: #dce9ff;
+    --color-on-surface: #0b1c30;
+    --color-on-surface-variant: #434655;
+    --color-secondary: #565e74;
+    --color-secondary-container: #dae2fd;
+    --color-tertiary-container: #006948;
+    --color-tertiary-fixed: #85f8c4;
+    --color-outline: #747686;
+    --color-outline-variant: #c4c5d7;
+    --color-error: #ba1a1a;
+    --color-error-container: #ffdad6;
+}
+
+/* --- Global Resets & Scrollbar Hide --- */
+::-webkit-scrollbar { display: none; }
+* { -ms-overflow-style: none; scrollbar-width: none; }
+
+[x-cloak] { display: none !important; }
+
+/* --- Selection Color --- */
+::selection {
+    background: #1d4ed8;
+    color: #fff;
+}
+
+/* --- Font Smoothing --- */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- Material Symbols Baseline Fix --- */
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 20;
+    user-select: none;
+    line-height: 1;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* --- Gradient Card Animation on Hover --- */
+.group:hover .group-hover\:shadow-xl {
+    transition: box-shadow 0.25s ease;
+}
+
+/* --- Custom Smooth Transitions --- */
+a, button {
+    transition-property: color, background-color, border-color, opacity, box-shadow, transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+/* --- Stat Dial Gauge Animation --- */
+path[stroke-dasharray] {
+    transition: stroke-dasharray 0.4s ease;
+}
+
+/* --- Fixed Header height offset for page content --- */
+.pt-27 {
+    padding-top: 6.75rem; /* 108px = 36px top bar + 72px nav */
+}
+
+/* --- No scrollbar utility --- */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

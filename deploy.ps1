@@ -9,7 +9,7 @@ param(
     [string]$FtpServer = "cardicstore.com",
     [string]$FtpUser   = "software@cardicstore.com",
     [string]$FtpPass   = "yuwvpXXXUMy5zDheFxvt",
-    [string]$RemoteDir = "/home/arutmwht/public_html",
+    [string]$RemoteDir = "public_html",
     [string]$AppUrl    = "https://cardicstore.com"
 )
 

@@ -143,6 +143,11 @@ jobs:
 
           @unlink($zipFile);
 
+          // Remove default DirectAdmin / cPanel coming-soon index.html so LiteSpeed serves index.php
+          if (file_exists($targetDir . "/index.html")) {
+              @unlink($targetDir . "/index.html");
+          }
+
           @chmod($targetDir . "/storage",          0775);
           @chmod($targetDir . "/bootstrap/cache",  0775);
 
@@ -216,13 +221,27 @@ jobs:
 
           echo "📦 Archive size: $(du -sh release.zip | cut -f1)"
 
-      # ── 8. Upload ONLY the two files via FTP ───────────────────────────────
+      # ── 8. Stage files & Normalize Remote Path ──────────────────────────────
       - name: Stage files for FTP upload
         run: |
           mkdir -p ftp_stage/public
           cp release.zip               ftp_stage/release.zip
           cp public/deploy_extract.php ftp_stage/deploy_extract.php
           cp public/deploy_extract.php ftp_stage/public/deploy_extract.php
+
+          # DirectAdmin / cPanel FTP accounts are already jailed inside their user directory (/home/arutmwht).
+          # Therefore the target directory must be "public_html/", not "/home/arutmwht/public_html/".
+          RAW_PATH="${{ secrets.REMOTE_PATH }}"
+          RAW_PATH="${RAW_PATH#/}"
+          RAW_PATH="${RAW_PATH#home/*/}"
+          if [[ -z "$RAW_PATH" || "$RAW_PATH" == "/" ]]; then
+            RAW_PATH="public_html/"
+          fi
+          if [[ "$RAW_PATH" != */ ]]; then
+            RAW_PATH="${RAW_PATH}/"
+          fi
+          echo "FTP_TARGET_DIR=$RAW_PATH" >> $GITHUB_ENV
+          echo "Sanitized FTP Target Directory: $RAW_PATH"
 
       - name: Upload via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -231,7 +250,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ftp_stage/
-          server-dir: ${{ secrets.REMOTE_PATH }}
+          server-dir: ${{ env.FTP_TARGET_DIR }}
           dangerous-clean-slate: false
 
       # ── 9. Trigger extraction on the live server ───────────────────────────
@@ -261,5 +280,5 @@ jobs:
           done
 
           echo "⚠️ Automated extraction could not be confirmed via HTTP."
-          echo "   release.zip is safely uploaded on your server at ${{ secrets.REMOTE_PATH }}."
+          echo "   release.zip is safely uploaded on your server at ${{ env.FTP_TARGET_DIR }}."
           exit 1

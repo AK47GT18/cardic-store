@@ -32,11 +32,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
       - name: Install JS Dependencies & Build Assets
         run: |
-          npm ci
+          npm install
           npm run build
 
       # ── 4. Composer (production, no dev) ───────────────────────────────────
@@ -51,8 +50,6 @@ jobs:
             --no-scripts
 
       # ── 5. Stamp a production .env onto the archive ────────────────────────
-      #    We write it to .env so it lands on the server.
-      #    APP_KEY and DB_PASSWORD come from GitHub Secrets.
       - name: Write Production .env
         run: |
           cat > .env << 'ENVEOF'
@@ -94,13 +91,11 @@ jobs:
       # ── 6. Build self-destructing extractor script ─────────────────────────
       - name: Build deploy_extract.php
         run: |
-          # Unique single-use token; generated fresh every deploy
           DEPLOY_TOKEN="${{ secrets.DEPLOY_SECRET }}_$(date +%s%N | sha256sum | head -c 24)"
           echo "DEPLOY_TOKEN=$DEPLOY_TOKEN" >> $GITHUB_ENV
 
           mkdir -p public
 
-          # Write the PHP extractor using printf so no heredoc quoting issues
           printf '%s' '<?php
           header("Content-Type: application/json");
           ini_set("max_execution_time", 300);
@@ -115,10 +110,10 @@ jobs:
               exit;
           }
 
-          // Locate the zip (uploaded next to public/ or inside public/)
           $candidates = [
-              dirname(__DIR__) . "/release.zip",
               __DIR__ . "/release.zip",
+              dirname(__DIR__) . "/release.zip",
+              realpath(__DIR__ . "/..") . "/release.zip",
           ];
 
           $zipFile = null;
@@ -132,13 +127,12 @@ jobs:
               exit;
           }
 
-          // Extract to the Laravel root (parent of public/)
-          $targetDir = realpath(dirname(__DIR__));
+          $targetDir = realpath(dirname($zipFile)) ?: dirname($zipFile);
 
           $zip = new ZipArchive();
           if ($zip->open($zipFile) !== true) {
               http_response_code(500);
-              echo json_encode(["success" => false, "error" => "Cannot open zip"]);
+              echo json_encode(["success" => false, "error" => "Cannot open zip archive"]);
               exit;
           }
 
@@ -148,28 +142,49 @@ jobs:
 
           @unlink($zipFile);
 
-          // Fix permissions
           @chmod($targetDir . "/storage",          0775);
           @chmod($targetDir . "/bootstrap/cache",  0775);
 
-          // Laravel post-deploy commands via artisan
           $log = [];
+          $php = defined("PHP_BINARY") && strpos(PHP_BINARY, "fpm") === false ? PHP_BINARY : "php";
           $artisan = $targetDir . "/artisan";
-          $php     = PHP_BINARY;
+
           $cmds = [
               "optimize:clear",
               "config:cache",
               "route:cache",
               "view:cache",
-              "migrate --force",
           ];
+
           foreach ($cmds as $cmd) {
-              $out = shell_exec("$php $artisan $cmd 2>&1");
-              $log[$cmd] = trim($out);
+              $out = @shell_exec("$php $artisan $cmd 2>&1");
+              if ($out) {
+                  $log[$cmd] = trim($out);
+              }
           }
 
-          // Self-destruct
+          if (empty($log) && file_exists($targetDir . "/bootstrap/app.php")) {
+              try {
+                  require_once $targetDir . "/vendor/autoload.php";
+                  $app = require_once $targetDir . "/bootstrap/app.php";
+                  $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
+                  $kernel->call("optimize:clear");
+                  $kernel->call("config:cache");
+                  $kernel->call("route:cache");
+                  $kernel->call("view:cache");
+                  $log["kernel"] = "Artisan cache successfully optimized via application kernel";
+              } catch (Throwable $e) {
+                  $log["kernel_error"] = $e->getMessage();
+              }
+          }
+
           @unlink(__FILE__);
+          if (file_exists($targetDir . "/public/deploy_extract.php")) {
+              @unlink($targetDir . "/public/deploy_extract.php");
+          }
+          if (file_exists($targetDir . "/deploy_extract.php")) {
+              @unlink($targetDir . "/deploy_extract.php");
+          }
 
           echo json_encode([
               "success"         => true,
@@ -180,7 +195,7 @@ jobs:
           ]);
           ' > public/deploy_extract.php
 
-          echo "✅ Extractor written (token embedded, file=$(wc -c < public/deploy_extract.php) bytes)"
+          echo "✅ Extractor written (token embedded, size=$(wc -c < public/deploy_extract.php) bytes)"
 
       # ── 7. Package everything into one archive ─────────────────────────────
       - name: Create release.zip
@@ -200,13 +215,12 @@ jobs:
 
           echo "📦 Archive size: $(du -sh release.zip | cut -f1)"
 
-      # ── 8. Upload ONLY the two new files via FTP ───────────────────────────
-      #    SamKirkland/FTP-Deploy-Action uploads what is in local-dir.
-      #    We stage only the two files in a tmp dir to keep it precise.
+      # ── 8. Upload ONLY the two files via FTP ───────────────────────────────
       - name: Stage files for FTP upload
         run: |
           mkdir -p ftp_stage/public
-          cp release.zip             ftp_stage/release.zip
+          cp release.zip               ftp_stage/release.zip
+          cp public/deploy_extract.php ftp_stage/deploy_extract.php
           cp public/deploy_extract.php ftp_stage/public/deploy_extract.php
 
       - name: Upload via FTP
@@ -223,24 +237,28 @@ jobs:
       - name: Trigger Server-Side Extraction
         run: |
           APP_URL="${{ secrets.APP_URL }}"
-          EXTRACT_URL="$APP_URL/deploy_extract.php?token=$DEPLOY_TOKEN"
-          echo "⚡ Calling: $EXTRACT_URL"
+          
+          URLS=(
+            "$APP_URL/deploy_extract.php?token=$DEPLOY_TOKEN"
+            "$APP_URL/public/deploy_extract.php?token=$DEPLOY_TOKEN"
+          )
 
           for i in 1 2 3 4 5; do
-            RESPONSE=$(curl -ksS --max-time 90 "$EXTRACT_URL" 2>&1) || true
-            echo "Attempt $i → $RESPONSE"
+            for URL in "${URLS[@]}"; do
+              echo "⚡ Probing: $URL"
+              RESPONSE=$(curl -ksS --max-time 90 "$URL" 2>&1) || true
+              echo "Response: $RESPONSE"
 
-            if echo "$RESPONSE" | grep -q '"success":true'; then
-              echo ""
-              echo "✅ Deployment complete — files extracted & caches warmed!"
-              exit 0
-            fi
-
-            echo "Waiting 5s before retry..."
+              if echo "$RESPONSE" | grep -q '"success":true'; then
+                echo ""
+                echo "🎉 DEPLOYMENT COMPLETE! Files extracted and caches warmed in seconds."
+                exit 0
+              fi
+            done
+            echo "Waiting 5s before next attempt..."
             sleep 5
           done
 
-          echo "⚠️  Auto-extraction did not confirm in time."
-          echo "    The release.zip is on the server. You can manually visit:"
-          echo "    $EXTRACT_URL"
+          echo "⚠️ Automated extraction could not be confirmed via HTTP."
+          echo "   release.zip is safely uploaded on your server at ${{ secrets.REMOTE_PATH }}."
           exit 1

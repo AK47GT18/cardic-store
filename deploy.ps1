@@ -45,9 +45,8 @@ if (empty(`$expectedToken) || !hash_equals(`$expectedToken, `$givenToken)) {
 
 `$candidates = [
     __DIR__ . '/release.zip',
-    __DIR__ . '/../release.zip',
-    realpath(__DIR__ . '/..') . '/release.zip',
     dirname(__DIR__) . '/release.zip',
+    realpath(__DIR__ . '/..') . '/release.zip',
 ];
 
 `$zipFile = null;
@@ -64,7 +63,7 @@ if (!`$zipFile) {
     exit;
 }
 
-`$targetDir = realpath(__DIR__ . '/..') ?: dirname(__DIR__);
+`$targetDir = realpath(dirname(`$zipFile)) ?: dirname(`$zipFile);
 
 `$zip = new ZipArchive();
 if (`$zip->open(`$zipFile) !== true) {
@@ -82,23 +81,34 @@ if (`$zip->open(`$zipFile) !== true) {
 @chmod(`$targetDir . '/bootstrap/cache', 0775);
 
 `$artisanLog = [];
-`$bootstrapApp = `$targetDir . '/bootstrap/app.php';
-if (file_exists(`$bootstrapApp)) {
+`$php = defined('PHP_BINARY') && strpos(PHP_BINARY, 'fpm') === false ? PHP_BINARY : 'php';
+`$artisan = `$targetDir . '/artisan';
+
+foreach (['optimize:clear', 'config:cache', 'route:cache', 'view:cache'] as `$cmd) {
+    `$out = @shell_exec("`$php `$artisan `$cmd 2>&1");
+    if (`$out) {
+        `$artisanLog[`$cmd] = trim(`$out);
+    }
+}
+
+if (empty(`$artisanLog) && file_exists(`$targetDir . '/bootstrap/app.php')) {
     try {
         require_once `$targetDir . '/vendor/autoload.php';
-        `$app = require_once `$bootstrapApp;
+        `$app = require_once `$targetDir . '/bootstrap/app.php';
         `$kernel = `$app->make(Illuminate\Contracts\Console\Kernel::class);
         `$kernel->call('optimize:clear');
         `$kernel->call('config:cache');
         `$kernel->call('route:cache');
         `$kernel->call('view:cache');
-        `$artisanLog[] = 'Artisan cache optimized successfully';
+        `$artisanLog['kernel'] = 'Artisan cache optimized via Laravel Kernel';
     } catch (Throwable `$e) {
-        `$artisanLog[] = 'Artisan error: ' . `$e->getMessage();
+        `$artisanLog['kernel_error'] = `$e->getMessage();
     }
 }
 
 @unlink(__FILE__);
+if (file_exists(`$targetDir . '/public/deploy_extract.php')) { @unlink(`$targetDir . '/public/deploy_extract.php'); }
+if (file_exists(`$targetDir . '/deploy_extract.php')) { @unlink(`$targetDir . '/deploy_extract.php'); }
 
 echo json_encode([
     'success' => true,
@@ -114,8 +124,7 @@ Set-Content -Path $extractorPath -Value $extractorContent -Encoding UTF8
 Write-Host "🗜️ Packaging release.zip..." -ForegroundColor Yellow
 if (Test-Path "release.zip") { Remove-Item "release.zip" -Force }
 
-# Use tar or powershell Compress-Archive
-$zipExclude = @(".git", ".github", "node_modules", "tests", "release.zip", ".env")
+$zipExclude = @(".git", ".github", "node_modules", "tests", "release.zip", ".env", "ftp_stage")
 $filesToZip = Get-ChildItem -Path . | Where-Object { $zipExclude -notcontains $_.Name }
 Compress-Archive -Path $filesToZip -DestinationPath "release.zip" -CompressionLevel Optimal
 
@@ -127,7 +136,8 @@ Write-Host "📡 Uploading single release archive to FTP server..." -ForegroundC
 
 $cleanRemoteDir = $RemoteDir.TrimEnd('/')
 $ftpZipUri = "ftp://$FtpServer$cleanRemoteDir/release.zip"
-$ftpExtractorUri = "ftp://$FtpServer$cleanRemoteDir/public/deploy_extract.php"
+$ftpExtractorRootUri = "ftp://$FtpServer$cleanRemoteDir/deploy_extract.php"
+$ftpExtractorPubUri  = "ftp://$FtpServer$cleanRemoteDir/public/deploy_extract.php"
 
 $wc = New-Object System.Net.WebClient
 $wc.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPass)
@@ -136,28 +146,40 @@ try {
     Write-Host "   -> Uploading release.zip..." -ForegroundColor Gray
     $wc.UploadFile($ftpZipUri, (Resolve-Path "release.zip").Path)
     Write-Host "   -> Uploading deploy_extract.php..." -ForegroundColor Gray
-    $wc.UploadFile($ftpExtractorUri, (Resolve-Path $extractorPath).Path)
+    $wc.UploadFile($ftpExtractorRootUri, (Resolve-Path $extractorPath).Path)
+    try { $wc.UploadFile($ftpExtractorPubUri, (Resolve-Path $extractorPath).Path) } catch {}
     Write-Host "   Upload complete!" -ForegroundColor Green
 } catch {
     Write-Host "FTP upload notice: $_" -ForegroundColor DarkYellow
     Write-Host "Trying curl fallback..." -ForegroundColor Gray
-    curl.exe -T "release.zip" "ftp://$FtpServer$cleanRemoteDir/release.zip" --user "$FtpUser`:$FtpPass"
-    curl.exe -T "$extractorPath" "ftp://$FtpServer$cleanRemoteDir/public/deploy_extract.php" --user "$FtpUser`:$FtpPass"
+    curl.exe -T "release.zip" "$ftpZipUri" --user "$FtpUser`:$FtpPass"
+    curl.exe -T "$extractorPath" "$ftpExtractorRootUri" --user "$FtpUser`:$FtpPass"
 }
 
 # 6. Trigger remote server-side extraction
 Write-Host "⚡ Triggering remote instant unzip on server..." -ForegroundColor Yellow
-$triggerUrl = "$AppUrl/deploy_extract.php?token=$deployToken"
+$urls = @(
+    "$AppUrl/deploy_extract.php?token=$deployToken",
+    "$AppUrl/public/deploy_extract.php?token=$deployToken"
+)
 
-try {
-    $res = Invoke-RestMethod -Uri $triggerUrl -TimeoutSec 120 -Method Get
-    Write-Host "`n✅ DEPLOYMENT COMPLETE!" -ForegroundColor Green
-    Write-Host "   Files Extracted: $($res.files_extracted)" -ForegroundColor Cyan
-    Write-Host "   Target Dir:     $($res.target_directory)" -ForegroundColor Cyan
-    Write-Host "   Artisan:        $($res.artisan -join ', ')" -ForegroundColor Cyan
-} catch {
-    Write-Host "Extractor response: $_" -ForegroundColor Yellow
-    Write-Host "Tip: If the web domain is not pointed yet, you can unzip release.zip in cPanel File Manager at $RemoteDir." -ForegroundColor DarkGray
+$success = $false
+foreach ($u in $urls) {
+    try {
+        $res = Invoke-RestMethod -Uri $u -TimeoutSec 60 -Method Get
+        if ($res.success) {
+            Write-Host "`n✅ DEPLOYMENT COMPLETE!" -ForegroundColor Green
+            Write-Host "   Files Extracted: $($res.files_extracted)" -ForegroundColor Cyan
+            Write-Host "   Target Dir:     $($res.target_directory)" -ForegroundColor Cyan
+            Write-Host "   Artisan:        $($res.artisan | Out-String)" -ForegroundColor Cyan
+            $success = $true
+            break
+        }
+    } catch {}
+}
+
+if (-not $success) {
+    Write-Host "Notice: The release.zip is on your server at $RemoteDir. You can unzip it in cPanel File Manager if web trigger didn't respond." -ForegroundColor Yellow
 }
 
 # 7. Cleanup local release.zip and local temporary extractor
@@ -165,4 +187,3 @@ if (Test-Path "release.zip") { Remove-Item "release.zip" -Force }
 if (Test-Path $extractorPath) { Remove-Item $extractorPath -Force }
 
 Write-Host "`n🎉 Done!`n" -ForegroundColor Green
-

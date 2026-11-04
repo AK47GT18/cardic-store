@@ -3,10 +3,18 @@
 <header
     class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
     x-data="{ scrolled: false }"
-    x-init="window.addEventListener('scroll', () => { scrolled = window.scrollY > 30 })">
+    x-init="window.addEventListener('scroll', () => { scrolled = window.scrollY > 60 }, { passive: true })">
 
-    {{-- Top Slim Utility Bar --}}
-    <div class="bg-[#0F172A] text-white px-4 sm:px-8 h-8 flex items-center justify-between text-xs ">
+    {{-- Top Slim Utility Bar — hidden when scrolled --}}
+    <div
+        x-show="!scrolled"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 -translate-y-2"
+        x-transition:enter-end="opacity-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100 translate-y-0"
+        x-transition:leave-end="opacity-0 -translate-y-2"
+        class="bg-[#0F172A] text-white px-4 sm:px-8 h-8 flex items-center justify-between text-xs overflow-hidden">
         <div class="flex items-center gap-3 truncate text-[11px]">
             <span class="flex items-center gap-1.5 text-[#38BDF8] font-semibold">
                 <span class="w-1.5 h-1.5 rounded-full bg-[#38BDF8] animate-pulse"></span>
@@ -65,8 +73,11 @@
         </div>
     </div>
 
-    {{-- Main Navbar (Solid deep navy #06111E, never transparent) --}}
-    <div class="bg-[#06111E] border-b border-slate-800 shadow-md">
+    {{-- Main Navbar — transparent at top, white + shadow when scrolled --}}
+    <div
+        :class="scrolled
+            ? 'bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-md'
+            : 'bg-transparent border-b border-transparent'">
         <div class="h-14 sm:h-16 max-w-7xl mx-auto px-4 sm:px-8 flex items-center justify-between gap-6">
 
             {{-- Logo --}}

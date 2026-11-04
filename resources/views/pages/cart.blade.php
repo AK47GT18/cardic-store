@@ -272,3 +272,4 @@
     </div>
 
 </x-layouts.app>
+

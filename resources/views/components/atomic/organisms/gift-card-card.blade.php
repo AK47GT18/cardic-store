@@ -1,18 +1,42 @@
 @props(['card'])
 
 <div 
-    x-data="{ selectedDenom: {{ $card['default_denomination'] }} }"
-    class="group bg-white rounded-2xl p-3.5 sm:p-4 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between border border-slate-100/90 relative hover:-translate-y-1">
+    x-data="{ 
+        selectedDenom: {{ $card['default_denomination'] }},
+        isCustom: false,
+        customInput: {{ $card['default_denomination'] }},
+        minLimit: 10,
+        maxLimit: 500,
+        setPreset(d) {
+            this.isCustom = false;
+            this.selectedDenom = d;
+        },
+        enableCustom() {
+            this.isCustom = true;
+            if (!this.customInput) {
+                this.customInput = this.selectedDenom;
+            }
+        },
+        onCustomInput(val) {
+            let v = parseFloat(val) || 0;
+            if (v > this.maxLimit) {
+                v = this.maxLimit;
+                this.customInput = this.maxLimit;
+            }
+            this.selectedDenom = v;
+        }
+    }"
+    class="group bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between border border-slate-200/80 relative hover:-translate-y-1 w-full max-w-md mx-auto">
     
     <div>
         {{-- Brand Visual Header: real image when available, gradient fallback --}}
-        <div class="relative w-full h-32 sm:h-36 rounded-xl overflow-hidden shadow-sm">
+        <div class="relative w-full h-40 sm:h-44 rounded-xl sm:rounded-2xl overflow-hidden shadow-sm">
             @if(!empty($card['image']))
                 <img
                     src="{{ asset($card['image']) }}"
                     alt="{{ $card['brand'] }}"
                     class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent"></div>
             @else
                 <div class="w-full h-full bg-gradient-to-tr {{ $card['gradient'] }} flex flex-col justify-between p-4 text-white">
                     {{-- Glow Orb --}}
@@ -21,8 +45,8 @@
             @endif
 
             {{-- Top Row: Region Code + Wishlist Button (Clean, No Emojis, No Save Badges) --}}
-            <div class="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between z-10">
-                <span class="bg-black/50 backdrop-blur-md px-2 py-0.5 rounded-full text-[10px] font-extrabold text-white shadow-xs tracking-wider uppercase">
+            <div class="absolute top-3 left-3 right-3 flex items-center justify-between z-10">
+                <span class="bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-extrabold text-white shadow-xs tracking-wider uppercase">
                     {{ $card['region_code'] }} Region
                 </span>
                 <button
@@ -37,53 +61,53 @@
                         gradient: '{{ $card['gradient'] }}',
                         image: '{{ !empty($card['image']) ? asset($card['image']) : '' }}'
                     })"
-                    class="w-7 h-7 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm flex items-center justify-center text-white transition-colors cursor-pointer"
+                    class="w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm flex items-center justify-center text-white transition-colors cursor-pointer"
                     title="Wishlist">
-                    <span class="material-symbols-outlined text-sm" :class="wishlist.some(i => i.id === '{{ $card['id'] }}') ? 'text-rose-500 fill-1' : 'text-white'">
+                    <span class="material-symbols-outlined text-base" :class="wishlist.some(i => i.id === '{{ $card['id'] }}') ? 'text-rose-500 fill-1' : 'text-white'">
                         favorite
                     </span>
                 </button>
             </div>
 
             {{-- Brand name + icon over image bottom --}}
-            <div class="absolute bottom-2.5 left-2.5 right-2.5 flex items-end justify-between z-10">
+            <div class="absolute bottom-3 left-3 right-3 flex items-end justify-between z-10">
                 <div class="min-w-0 pr-1">
-                    <div class="text-sm sm:text-base font-extrabold tracking-wide text-white drop-shadow-sm truncate">{{ $card['brand'] }}</div>
-                    <div class="text-[10px] text-white/80 font-medium truncate">{{ $card['subtitle'] }}</div>
+                    <div class="text-base sm:text-lg font-black tracking-wide text-white drop-shadow-sm truncate">{{ $card['brand'] }}</div>
+                    <div class="text-xs text-white/85 font-medium truncate">{{ $card['subtitle'] }}</div>
                 </div>
-                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-black/30 backdrop-blur-sm flex items-center justify-center text-white/90 shrink-0">
-                    <span class="material-symbols-outlined text-base sm:text-lg">{{ $card['icon'] }}</span>
+                <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-black/40 backdrop-blur-sm flex items-center justify-center text-white/90 shrink-0">
+                    <span class="material-symbols-outlined text-lg sm:text-xl">{{ $card['icon'] }}</span>
                 </div>
             </div>
         </div>
 
         {{-- Product Details --}}
-        <div class="mt-3">
+        <div class="mt-3.5">
             <div class="flex items-center justify-between gap-1">
-                <h3 class="text-xs sm:text-sm font-extrabold text-[#0F172A] group-hover:text-[#2563EB] transition-colors line-clamp-1">
+                <h3 class="text-sm sm:text-base font-extrabold text-[#0F172A] group-hover:text-[#2563EB] transition-colors line-clamp-1">
                     {{ $card['name'] }}
                 </h3>
-                <div class="flex items-center gap-0.5 text-amber-500 font-bold text-[11px] shrink-0">
-                    <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+                <div class="flex items-center gap-0.5 text-amber-500 font-bold text-xs shrink-0">
+                    <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
                     <span>{{ number_format($card['rating'], 1) }}</span>
                 </div>
             </div>
 
             {{-- Denominations Selection Pills & Custom Amount --}}
-            <div class="mt-2.5">
-                <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+            <div class="mt-3">
+                <div class="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
                     <span>Select Value:</span>
-                    <span class="text-slate-400 font-semibold normal-case">Limit: $10 – $500</span>
+                    <span class="text-slate-400 font-semibold normal-case text-[11px]">Limit: $10 – $500</span>
                 </div>
-                <div class="flex flex-wrap gap-1 sm:gap-1.5">
+                <div class="grid grid-cols-5 gap-1.5 sm:gap-2">
                     @foreach($card['denominations'] as $denom)
                         <button 
                             type="button"
                             @click="setPreset({{ $denom }})"
                             :class="(!isCustom && selectedDenom === {{ $denom }}) 
-                                ? 'bg-[#2563EB] text-white font-bold shadow-xs scale-[1.02]' 
-                                : 'bg-[#eff4ff] hover:bg-[#dce9ff] text-slate-700 font-semibold'"
-                            class="flex-1 min-w-[48px] py-1 rounded-lg text-[10px] sm:text-xs transition-all duration-150 cursor-pointer text-center">
+                                ? 'bg-[#2563EB] text-white font-extrabold shadow-sm scale-[1.02]' 
+                                : 'bg-[#eff4ff] hover:bg-[#dce9ff] text-slate-700 font-bold'"
+                            class="py-2 px-1 rounded-xl text-xs transition-all duration-150 cursor-pointer text-center">
                             ${{ $denom }}
                         </button>
                     @endforeach
@@ -91,16 +115,16 @@
                         type="button"
                         @click="enableCustom()"
                         :class="isCustom 
-                            ? 'bg-[#2563EB] text-white font-bold shadow-xs scale-[1.02]' 
-                            : 'bg-[#eff4ff] hover:bg-[#dce9ff] text-slate-700 font-semibold'"
-                        class="flex-1 min-w-[56px] py-1 rounded-lg text-[10px] sm:text-xs transition-all duration-150 cursor-pointer text-center">
+                            ? 'bg-[#2563EB] text-white font-extrabold shadow-sm scale-[1.02]' 
+                            : 'bg-[#eff4ff] hover:bg-[#dce9ff] text-slate-700 font-bold'"
+                        class="py-2 px-1 rounded-xl text-xs transition-all duration-150 cursor-pointer text-center">
                         Custom
                     </button>
                 </div>
 
                 {{-- Custom Amount Input ($10 - $500) --}}
-                <div x-show="isCustom" x-cloak class="mt-2 flex items-center gap-2 bg-slate-50 border border-blue-200 rounded-xl px-3 py-1.5 shadow-inner">
-                    <span class="text-xs font-bold text-slate-500">$</span>
+                <div x-show="isCustom" x-cloak class="mt-2.5 flex items-center gap-2 bg-slate-50 border border-blue-300 rounded-xl px-3.5 py-2 shadow-inner">
+                    <span class="text-sm font-bold text-slate-500">$</span>
                     <input 
                         type="number"
                         min="10"
@@ -108,27 +132,27 @@
                         step="1"
                         x-model="customInput"
                         @input="onCustomInput($event.target.value)"
-                        placeholder="10 - 500"
-                        class="w-full bg-transparent text-xs font-bold text-slate-800 outline-none placeholder:text-slate-400 placeholder:font-normal">
-                    <span class="text-[10px] font-extrabold text-[#2563EB] shrink-0" x-text="formatMwk(selectedDenom)"></span>
+                        placeholder="Enter 10 - 500"
+                        class="w-full bg-transparent text-sm font-bold text-slate-800 outline-none placeholder:text-slate-400 placeholder:font-normal">
+                    <span class="text-xs font-black text-[#2563EB] shrink-0" x-text="formatMwk(selectedDenom)"></span>
                 </div>
             </div>
         </div>
     </div>
 
     {{-- Price & Live MWK Conversion (Instant badge removed) --}}
-    <div class="mt-3 pt-2.5 bg-slate-50/80 p-2.5 sm:p-3 rounded-xl border border-slate-100">
-        <div class="flex items-center justify-between mb-2">
-            <div class="flex items-baseline gap-1.5 flex-wrap">
-                <span class="text-base sm:text-xl font-extrabold text-[#0F172A] tracking-tight" x-text="formatCurrency(selectedDenom)">
+    <div class="mt-4 pt-3 bg-slate-50/90 p-3 sm:p-3.5 rounded-2xl border border-slate-100">
+        <div class="flex items-center justify-between mb-3">
+            <div class="flex items-baseline gap-2 flex-wrap">
+                <span class="text-lg sm:text-2xl font-black text-[#0F172A] tracking-tight" x-text="formatCurrency(selectedDenom)">
                     ${{ number_format($card['default_denomination'], 2) }}
                 </span>
-                <span class="text-[11px] font-bold text-[#2563EB]" x-show="currentCurrency !== 'MWK'" x-text="'(≈ ' + formatMwk(selectedDenom) + ')'"></span>
+                <span class="text-xs font-bold text-[#2563EB]" x-show="currentCurrency !== 'MWK'" x-text="'(≈ ' + formatMwk(selectedDenom) + ')'"></span>
             </div>
-            <span class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Verified Vault</span>
+            <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Verified Stock</span>
         </div>
 
-        <div class="flex items-center gap-1.5">
+        <div class="flex items-center gap-2">
             {{-- Buy Now --}}
             <button 
                 type="button"
@@ -143,9 +167,9 @@
                     gradient: '{{ $card['gradient'] }}',
                     image: '{{ !empty($card['image']) ? asset($card['image']) : '' }}'
                 })"
-                class="flex-1 bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-[11px] sm:text-xs py-2 sm:py-2.5 rounded-lg font-bold flex items-center justify-center gap-1 transition-all shadow-xs cursor-pointer active:scale-95">
+                class="flex-1 bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs sm:text-sm py-3 px-4 rounded-xl font-black flex items-center justify-center gap-1.5 transition-all shadow-sm cursor-pointer active:scale-95">
                 <span>Buy Now</span>
-                <span class="material-symbols-outlined text-xs sm:text-sm">arrow_forward</span>
+                <span class="material-symbols-outlined text-sm sm:text-base">arrow_forward</span>
             </button>
 
             {{-- Add To Cart button --}}
@@ -163,9 +187,9 @@
                     gradient: '{{ $card['gradient'] }}',
                     image: '{{ !empty($card['image']) ? asset($card['image']) : '' }}'
                 })"
-                class="p-2 sm:p-2.5 rounded-lg bg-white hover:bg-blue-50 text-[#2563EB] border border-blue-200/80 flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95"
+                class="p-3 rounded-xl bg-white hover:bg-blue-50 text-[#2563EB] border border-blue-200 flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95 shrink-0"
                 title="Add to cart">
-                <span class="material-symbols-outlined text-sm sm:text-base">add_shopping_cart</span>
+                <span class="material-symbols-outlined text-lg">add_shopping_cart</span>
             </button>
         </div>
     </div>

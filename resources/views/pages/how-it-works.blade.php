@@ -1,4 +1,4 @@
-<x-layouts.app title="How It Works — Simple 3-Step Gift Card Purchase">
+﻿<x-layouts.app title="How It Works — Simple 3-Step Gift Card Purchase">
 
     <div class="bg-[#F8FAFC] text-[#0F172A] min-h-screen">
 
@@ -697,7 +697,7 @@
                         <span>How quickly will I receive my gift card code?</span>
                         <span class="material-symbols-outlined text-slate-400 text-base" :class="activeAccordion === 1 ? 'rotate-180' : ''">expand_more</span>
                     </button>
-                    <div x-show="activeAccordion === 1" x-collapse class="mt-3 text-xs text-slate-600 leading-relaxed pt-2 border-t border-slate-100">
+                    <div x-show="activeAccordion === 1" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-1" class="mt-3 text-xs text-slate-600 leading-relaxed pt-2 border-t border-slate-100">
                         Orders are processed automatically through our clearing nodes. Codes are revealed directly on your screen and dispatched to your email within 40 to 60 seconds after payment confirmation.
                     </div>
                 </div>
@@ -711,7 +711,7 @@
                         <span>Do I need to create an account to buy?</span>
                         <span class="material-symbols-outlined text-slate-400 text-base" :class="activeAccordion === 2 ? 'rotate-180' : ''">expand_more</span>
                     </button>
-                    <div x-show="activeAccordion === 2" x-collapse class="mt-3 text-xs text-slate-600 leading-relaxed pt-2 border-t border-slate-100">
+                    <div x-show="activeAccordion === 2" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-1" class="mt-3 text-xs text-slate-600 leading-relaxed pt-2 border-t border-slate-100">
                         No. Cardic Store requires zero account sign-up or password creation. All you need is an email address where your purchase receipt and encrypted backup code can be sent.
                     </div>
                 </div>
@@ -725,7 +725,7 @@
                         <span>What payment methods can I use?</span>
                         <span class="material-symbols-outlined text-slate-400 text-base" :class="activeAccordion === 3 ? 'rotate-180' : ''">expand_more</span>
                     </button>
-                    <div x-show="activeAccordion === 3" x-collapse class="mt-3 text-xs text-slate-600 leading-relaxed pt-2 border-t border-slate-100">
+                    <div x-show="activeAccordion === 3" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-1" class="mt-3 text-xs text-slate-600 leading-relaxed pt-2 border-t border-slate-100">
                         We accept Visa, Mastercard, Apple Pay, Google Pay, and major cryptocurrencies (Bitcoin, USDT TRC20/ERC20) through our bank-grade encrypted checkout gateway.
                     </div>
                 </div>
@@ -739,7 +739,7 @@
                         <span>What happens if a code does not redeem?</span>
                         <span class="material-symbols-outlined text-slate-400 text-base" :class="activeAccordion === 4 ? 'rotate-180' : ''">expand_more</span>
                     </button>
-                    <div x-show="activeAccordion === 4" x-collapse class="mt-3 text-xs text-slate-600 leading-relaxed pt-2 border-t border-slate-100">
+                    <div x-show="activeAccordion === 4" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-1" class="mt-3 text-xs text-slate-600 leading-relaxed pt-2 border-t border-slate-100">
                         Every purchase is backed by our 100% Escrow Warranty. In the rare event of an issuer activation delay, our automated dispute resolution system pings the merchant API and provides an immediate working replacement or complete cash refund.
                     </div>
                 </div>

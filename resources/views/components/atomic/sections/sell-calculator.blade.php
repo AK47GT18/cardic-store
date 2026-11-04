@@ -1,4 +1,4 @@
-{{-- ============================================================
+﻿{{-- ============================================================
      SECTION 6: CUSTOMER REVIEWS & BUYER ASSURANCE FAQ
      Buyer-focused testimonials and purchase guarantee answers
      ============================================================ --}}
@@ -82,7 +82,7 @@
                     <span class="material-symbols-outlined text-slate-400 transition-transform duration-200"
                           :class="openFaq === 1 ? 'rotate-180 text-[#2563EB]' : ''">expand_more</span>
                 </button>
-                <div x-show="openFaq === 1" x-collapse class="px-6 pb-5 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
+                <div x-show="openFaq === 1" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-1" class="px-6 pb-5 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
                     Your code is revealed instantly on screen as soon as your checkout is confirmed, typically in under 45 seconds. A confirmation email with your encrypted voucher key is also dispatched immediately.
                 </div>
             </div>
@@ -96,7 +96,7 @@
                     <span class="material-symbols-outlined text-slate-400 transition-transform duration-200"
                           :class="openFaq === 2 ? 'rotate-180 text-[#2563EB]' : ''">expand_more</span>
                 </button>
-                <div x-show="openFaq === 2" x-collapse class="px-6 pb-5 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
+                <div x-show="openFaq === 2" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-1" class="px-6 pb-5 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
                     Every digital code on Cardic Store is pre-verified directly against the brand's balance API before delivery. In the rare event of an issue, our 100% escrow balance guarantee provides an instant replacement or full refund.
                 </div>
             </div>
@@ -110,7 +110,7 @@
                     <span class="material-symbols-outlined text-slate-400 transition-transform duration-200"
                           :class="openFaq === 3 ? 'rotate-180 text-[#2563EB]' : ''">expand_more</span>
                 </button>
-                <div x-show="openFaq === 3" x-collapse class="px-6 pb-5 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
+                <div x-show="openFaq === 3" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-1" class="px-6 pb-5 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
                     We accept all major Credit and Debit Cards (Visa, Mastercard, American Express), Apple Pay, Google Pay, and major cryptocurrencies (Bitcoin, USDT, Ethereum) with zero processing fees.
                 </div>
             </div>
@@ -124,7 +124,7 @@
                     <span class="material-symbols-outlined text-slate-400 transition-transform duration-200"
                           :class="openFaq === 4 ? 'rotate-180 text-[#2563EB]' : ''">expand_more</span>
                 </button>
-                <div x-show="openFaq === 4" x-collapse class="px-6 pb-5 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
+                <div x-show="openFaq === 4" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-1" class="px-6 pb-5 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
                     Unless specifically specified by a brand (such as promotional event passes), our retail and gaming gift cards have no expiration dates and retain their full face value until redeemed.
                 </div>
             </div>

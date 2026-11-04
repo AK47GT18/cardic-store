@@ -80,31 +80,36 @@
             : 'bg-transparent border-b border-transparent'">
         <div class="h-14 sm:h-16 max-w-7xl mx-auto px-4 sm:px-8 flex items-center justify-between gap-6">
 
-            {{-- Logo --}}
+            {{-- Logo — white at top, colour when scrolled --}}
             <div class="shrink-0 flex items-center">
-                <x-atomic.atoms.logo size="md" variant="white" />
+                <x-atomic.atoms.logo size="md" variant="auto" />
             </div>
 
-            {{-- Nav Links --}}
-            <nav class="hidden md:flex items-center gap-7 text-xs sm:text-sm font-semibold tracking-wide text-slate-200">
+            {{-- Nav Links — adapt color on scroll --}}
+            <nav class="hidden md:flex items-center gap-7 text-xs sm:text-sm font-semibold tracking-wide">
                 <a href="{{ route('home') }}"
-                   class="hover:text-[#38BDF8] transition-colors {{ request()->routeIs('home') ? 'text-[#38BDF8] font-bold' : '' }}">
+                   :class="scrolled ? 'text-slate-700 hover:text-[#2563EB]' : 'text-slate-100 hover:text-[#38BDF8]'"
+                   class="transition-colors {{ request()->routeIs('home') ? 'font-bold' : '' }}">
                     Home
                 </a>
                 <a href="{{ route('marketplace') }}"
-                   class="hover:text-[#38BDF8] transition-colors {{ request()->routeIs('marketplace') || request()->routeIs('cards.*') ? 'text-[#38BDF8] font-bold' : '' }}">
+                   :class="scrolled ? 'text-slate-700 hover:text-[#2563EB]' : 'text-slate-100 hover:text-[#38BDF8]'"
+                   class="transition-colors {{ request()->routeIs('marketplace') || request()->routeIs('cards.*') ? 'font-bold' : '' }}">
                     Gift Cards
                 </a>
                 <a href="{{ route('about') }}"
-                   class="hover:text-[#38BDF8] transition-colors {{ request()->routeIs('about') ? 'text-[#38BDF8] font-bold' : '' }}">
+                   :class="scrolled ? 'text-slate-700 hover:text-[#2563EB]' : 'text-slate-100 hover:text-[#38BDF8]'"
+                   class="transition-colors {{ request()->routeIs('about') ? 'font-bold' : '' }}">
                     About Us
                 </a>
                 <a href="{{ route('how-it-works') }}"
-                   class="hover:text-[#38BDF8] transition-colors {{ request()->routeIs('how-it-works') ? 'text-[#38BDF8] font-bold' : '' }}">
+                   :class="scrolled ? 'text-slate-700 hover:text-[#2563EB]' : 'text-slate-100 hover:text-[#38BDF8]'"
+                   class="transition-colors {{ request()->routeIs('how-it-works') ? 'font-bold' : '' }}">
                     How It Works
                 </a>
                 <a href="{{ route('contact') }}"
-                   class="hover:text-[#38BDF8] transition-colors {{ request()->routeIs('contact') ? 'text-[#38BDF8] font-bold' : '' }}">
+                   :class="scrolled ? 'text-slate-700 hover:text-[#2563EB]' : 'text-slate-100 hover:text-[#38BDF8]'"
+                   class="transition-colors {{ request()->routeIs('contact') ? 'font-bold' : '' }}">
                     Contact Us
                 </a>
             </nav>
@@ -114,14 +119,19 @@
 
                 {{-- Compact Search Input --}}
                 <div class="hidden lg:flex items-center w-44 xl:w-48">
-                    <div class="relative w-full flex items-center rounded-full px-3 py-1.5 gap-2 transition-all border border-slate-700/80 bg-slate-900/90 focus-within:border-[#38BDF8]">
-                        <span class="material-symbols-outlined text-slate-400 text-sm">search</span>
+                    <div :class="scrolled
+                            ? 'border-slate-300 bg-slate-100/80 focus-within:border-[#2563EB]'
+                            : 'border-slate-700/80 bg-slate-900/90 focus-within:border-[#38BDF8]'"
+                         class="relative w-full flex items-center rounded-full px-3 py-1.5 gap-2 transition-all border">
+                        <span class="material-symbols-outlined text-sm"
+                              :class="scrolled ? 'text-slate-500' : 'text-slate-400'">search</span>
                         <input
                             type="text"
                             x-model="searchQuery"
                             @input.debounce.300ms="applyFilter()"
                             placeholder="Search cards..."
-                            class="w-full bg-transparent border-none outline-none text-xs font-medium text-white placeholder:text-slate-400">
+                            :class="scrolled ? 'text-slate-800 placeholder:text-slate-400' : 'text-white placeholder:text-slate-400'"
+                            class="w-full bg-transparent border-none outline-none text-xs font-medium">
                     </div>
                 </div>
 
@@ -129,7 +139,8 @@
                 <button
                     type="button"
                     @click="openWishlist = true"
-                    class="relative p-2 rounded-full text-slate-300 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                    :class="scrolled ? 'text-slate-600 hover:text-[#2563EB] hover:bg-blue-50' : 'text-slate-300 hover:text-white hover:bg-white/10'"
+                    class="relative p-2 rounded-full transition-colors cursor-pointer"
                     title="Wishlist">
                     <span class="material-symbols-outlined text-xl">favorite</span>
                     <span
@@ -143,7 +154,8 @@
                 <button
                     type="button"
                     @click="cartOpen = true"
-                    class="relative p-2 rounded-full text-slate-300 hover:text-white hover:bg-white/10 transition-colors cursor-pointer flex items-center justify-center"
+                    :class="scrolled ? 'text-slate-600 hover:text-[#2563EB] hover:bg-blue-50' : 'text-slate-300 hover:text-white hover:bg-white/10'"
+                    class="relative p-2 rounded-full transition-colors cursor-pointer flex items-center justify-center"
                     title="Shopping Cart">
                     <span class="material-symbols-outlined text-xl">shopping_bag</span>
                     <span
@@ -164,7 +176,8 @@
                 <button
                     type="button"
                     @click="mobileMenuOpen = !mobileMenuOpen"
-                    class="md:hidden p-1.5 rounded-lg text-white hover:bg-white/10 focus:outline-none">
+                    :class="scrolled ? 'text-slate-700' : 'text-white'"
+                    class="md:hidden p-1.5 rounded-lg hover:bg-white/10 focus:outline-none">
                     <span class="material-symbols-outlined text-2xl" x-text="mobileMenuOpen ? 'close' : 'menu'">menu</span>
                 </button>
             </div>

@@ -114,7 +114,8 @@ jobs:
           $candidates = [
               __DIR__ . "/release.zip",
               dirname(__DIR__) . "/release.zip",
-              realpath(__DIR__ . "/..") . "/release.zip",
+              "/home/arutmwht/domains/cardicstore.com/public_html/release.zip",
+              "/home/arutmwht/public_html/release.zip",
           ];
 
           $zipFile = null;
@@ -152,20 +153,21 @@ jobs:
           @chmod($targetDir . "/bootstrap/cache",  0775);
 
           $log = [];
-          $php = defined("PHP_BINARY") && strpos(PHP_BINARY, "fpm") === false ? PHP_BINARY : "php";
-          $artisan = $targetDir . "/artisan";
-
-          $cmds = [
-              "optimize:clear",
-              "config:cache",
-              "route:cache",
-              "view:cache",
-          ];
-
-          foreach ($cmds as $cmd) {
-              $out = @shell_exec("$php $artisan $cmd 2>&1");
-              if ($out) {
-                  $log[$cmd] = trim($out);
+          
+          if (function_exists("shell_exec")) {
+              $php = defined("PHP_BINARY") && strpos(PHP_BINARY, "fpm") === false ? PHP_BINARY : "php";
+              $artisan = $targetDir . "/artisan";
+              $cmds = [
+                  "optimize:clear",
+                  "config:cache",
+                  "route:cache",
+                  "view:cache",
+              ];
+              foreach ($cmds as $cmd) {
+                  $out = @shell_exec("$php $artisan $cmd 2>&1");
+                  if ($out) {
+                      $log[$cmd] = trim($out);
+                  }
               }
           }
 
@@ -221,37 +223,24 @@ jobs:
 
           echo "📦 Archive size: $(du -sh release.zip | cut -f1)"
 
-      # ── 8. Stage files & Normalize Remote Path ──────────────────────────────
-      - name: Stage files for FTP upload
+      # ── 8. Upload Directly via cURL (Fast & Rock-Solid) ────────────────────
+      - name: Fast Direct FTP Upload
         run: |
-          mkdir -p ftp_stage/public
-          cp release.zip               ftp_stage/release.zip
-          cp public/deploy_extract.php ftp_stage/deploy_extract.php
-          cp public/deploy_extract.php ftp_stage/public/deploy_extract.php
+          FTP_HOST="${{ secrets.FTP_SERVER }}"
+          FTP_USER="${{ secrets.FTP_USERNAME }}"
+          FTP_PASS="${{ secrets.FTP_PASSWORD }}"
+          
+          # DirectAdmin web root for cardicstore.com
+          REMOTE_DIR="domains/cardicstore.com/public_html"
 
-          # DirectAdmin / cPanel FTP accounts are already jailed inside their user directory (/home/arutmwht).
-          # Therefore the target directory must be "public_html/", not "/home/arutmwht/public_html/".
-          RAW_PATH="${{ secrets.REMOTE_PATH }}"
-          RAW_PATH="${RAW_PATH#/}"
-          RAW_PATH="${RAW_PATH#home/*/}"
-          if [[ -z "$RAW_PATH" || "$RAW_PATH" == "/" ]]; then
-            RAW_PATH="public_html/"
-          fi
-          if [[ "$RAW_PATH" != */ ]]; then
-            RAW_PATH="${RAW_PATH}/"
-          fi
-          echo "FTP_TARGET_DIR=$RAW_PATH" >> $GITHUB_ENV
-          echo "Sanitized FTP Target Directory: $RAW_PATH"
-
-      - name: Upload via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ftp_stage/
-          server-dir: ${{ env.FTP_TARGET_DIR }}
-          dangerous-clean-slate: false
+          echo "🚀 Uploading release.zip ($REMOTE_DIR/release.zip)..."
+          curl -k -s -S --ftp-create-dirs -T release.zip "ftp://$FTP_HOST/$REMOTE_DIR/release.zip" --user "$FTP_USER:$FTP_PASS"
+          
+          echo "🚀 Uploading deploy_extract.php to root and public/..."
+          curl -k -s -S --ftp-create-dirs -T public/deploy_extract.php "ftp://$FTP_HOST/$REMOTE_DIR/deploy_extract.php" --user "$FTP_USER:$FTP_PASS"
+          curl -k -s -S --ftp-create-dirs -T public/deploy_extract.php "ftp://$FTP_HOST/$REMOTE_DIR/public/deploy_extract.php" --user "$FTP_USER:$FTP_PASS"
+          
+          echo "✅ Upload completed successfully!"
 
       # ── 9. Trigger extraction on the live server ───────────────────────────
       - name: Trigger Server-Side Extraction
@@ -280,5 +269,5 @@ jobs:
           done
 
           echo "⚠️ Automated extraction could not be confirmed via HTTP."
-          echo "   release.zip is safely uploaded on your server at ${{ env.FTP_TARGET_DIR }}."
+          echo "   release.zip is safely uploaded on your server at $REMOTE_DIR/release.zip."
           exit 1

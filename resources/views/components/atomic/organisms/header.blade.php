@@ -14,12 +14,10 @@
          style="max-height: 36px; opacity: 1; transition: max-height 0.25s ease, opacity 0.2s ease; overflow: hidden;"
          class="bg-[#0F172A] text-white px-4 sm:px-8 h-8 flex items-center justify-between text-xs">
         <div class="flex items-center gap-3 truncate text-[11px]">
-            <span class="flex items-center gap-1.5 text-[#38BDF8] font-semibold">
-                <span class="w-1.5 h-1.5 rounded-full bg-[#38BDF8] animate-pulse"></span>
-                <span>Verified Escrow Protocol Active</span>
+            <span class="flex items-center gap-1.5 text-emerald-400 font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Instant Delivery Guaranteed</span>
             </span>
-            <span class="hidden md:inline text-slate-500">·</span>
-            <span class="hidden md:inline text-slate-300">Instant Delivery Guaranteed</span>
             <span class="hidden md:inline text-slate-500">·</span>
             <a href="mailto:support@cardicstore.com" class="hidden md:flex items-center gap-1 text-slate-300 hover:text-white transition-colors">
                 <span class="material-symbols-outlined text-xs">mail</span>

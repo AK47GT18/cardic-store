@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
 <head>
     <meta charset="utf-8">
@@ -277,9 +277,16 @@
 
                         const data = await response.json();
                         
-                        // Generate cryptographic voucher format
-                        const randSegment = () => Math.random().toString(36).substring(2, 6).toUpperCase();
-                        this.generatedVoucherKey = `CRDC-${randSegment()}-${randSegment()}-${randSegment()}`;
+                        if (data.checkout_url) {
+                            // Redirect to PayChangu Hosted Checkout (Airtel Money / TNM Mpamba / Cards)
+                            this.cart = [];
+                            this.saveCart();
+                            window.location.href = data.checkout_url;
+                            return;
+                        }
+
+                        // Instant Escrow Settlement
+                        this.generatedVoucherKey = data.voucher_code || `CRDC-94A2-ESCR-MWK`;
                         this.confirmedOrderId = data.order_id || 'CDS-84F29B';
 
                         // Empty cart

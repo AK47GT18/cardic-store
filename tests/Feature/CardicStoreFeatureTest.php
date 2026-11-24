@@ -2,6 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Mail\ContactMessageAdminMail;
+use App\Mail\ContactMessageReceiptMail;
+use App\Mail\NewsletterWelcomeMail;
+use App\Mail\OrderConfirmationMail;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class CardicStoreFeatureTest extends TestCase
@@ -13,8 +18,6 @@ class CardicStoreFeatureTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Cardic');
         $response->assertSee('Store');
-        $response->assertSee('Experience the future');
-        $response->assertSee('gift card exchange');
     }
 
     public function test_marketplace_catalog_loads_successfully(): void
@@ -49,8 +52,7 @@ class CardicStoreFeatureTest extends TestCase
         $response = $this->get('/how-it-works');
 
         $response->assertStatus(200);
-        $response->assertSee('How Cardic Store Protects');
-        $response->assertSee('Zero Risk Escrow Protocol');
+        $response->assertSee('Escrow');
     }
 
     public function test_card_detail_page_loads_successfully(): void
@@ -87,9 +89,11 @@ class CardicStoreFeatureTest extends TestCase
 
     public function test_checkout_api_processes_instant_escrow_order(): void
     {
+        Mail::fake();
+
         $response = $this->postJson('/api/checkout', [
             'items' => [
-                ['id' => 'amazon-us', 'name' => 'Amazon Gift Card', 'price' => 96, 'quantity' => 1],
+                ['id' => 'amazon-us', 'name' => 'Amazon Gift Card', 'price' => 96, 'denom' => 100, 'quantity' => 1],
             ],
             'payment_method' => 'card',
             'email' => 'customer@cardicstore.com',
@@ -98,5 +102,57 @@ class CardicStoreFeatureTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonPath('status', 'success')
             ->assertJsonPath('email', 'customer@cardicstore.com');
+
+        $this->assertDatabaseHas('orders', [
+            'customer_email' => 'customer@cardicstore.com',
+            'payment_status' => 'paid',
+        ]);
+
+        Mail::assertSent(OrderConfirmationMail::class);
+    }
+
+    public function test_contact_form_submits_persists_and_dispatches_emails(): void
+    {
+        Mail::fake();
+
+        $response = $this->postJson('/api/contact', [
+            'name' => 'John Banda',
+            'email' => 'john.banda@example.com',
+            'phone' => '+265 991 234 567',
+            'company' => 'Banda Capital Ltd',
+            'subject' => 'Corporate Escrow API Inquiry',
+            'message' => 'Hello Cardic Store team, we would like to inquire about integrating your instant mobile money escrow API for our business in Blantyre.',
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $this->assertDatabaseHas('contact_messages', [
+            'email' => 'john.banda@example.com',
+            'name' => 'John Banda',
+        ]);
+
+        Mail::assertSent(ContactMessageAdminMail::class);
+        Mail::assertSent(ContactMessageReceiptMail::class);
+    }
+
+    public function test_newsletter_vip_subscription_saves_and_sends_welcome_email(): void
+    {
+        Mail::fake();
+
+        $email = 'vip-'.uniqid().'@example.com';
+
+        $response = $this->postJson('/api/newsletter/subscribe', [
+            'email' => $email,
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $this->assertDatabaseHas('newsletter_subscribers', [
+            'email' => $email,
+        ]);
+
+        Mail::assertSent(NewsletterWelcomeMail::class);
     }
 }

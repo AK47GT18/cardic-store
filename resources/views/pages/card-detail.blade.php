@@ -130,6 +130,58 @@
 
                 {{-- RIGHT: Purchase Panel (Sticky, 5 cols) --}}
                 <div class="lg:col-span-5 lg:sticky lg:top-24 flex flex-col gap-5">
+
+                    {{-- ── Malawi Availability + How-To-Redeem Banner ── --}}
+                    <div class="rounded-2xl border overflow-hidden shadow-sm
+                        @if($card['region_scope'] === 'global') border-emerald-200 bg-emerald-50 @else border-amber-200 bg-amber-50 @endif">
+
+                        {{-- Header Row --}}
+                        <div class="flex items-center gap-2 px-4 py-3
+                            @if($card['region_scope'] === 'global') bg-emerald-100 @else bg-amber-100 @endif">
+                            @if($card['region_scope'] === 'global')
+                                <span class="material-symbols-outlined text-emerald-600 text-base">public</span>
+                                <span class="text-xs font-black text-emerald-800 uppercase tracking-wide">GLOBAL Region</span>
+                                <span class="ml-auto inline-flex items-center gap-1 bg-emerald-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full">
+                                    <span class="material-symbols-outlined text-[11px]">check_circle</span>
+                                    Available in Malawi
+                                </span>
+                            @else
+                                <span class="material-symbols-outlined text-amber-600 text-base">flag</span>
+                                <span class="text-xs font-black text-amber-800 uppercase tracking-wide">{{ $card['region_code'] }} Region</span>
+                                <span class="ml-auto inline-flex items-center gap-1 bg-amber-500 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full">
+                                    <span class="material-symbols-outlined text-[11px]">info</span>
+                                    Works in Malawi
+                                </span>
+                            @endif
+                        </div>
+
+                        {{-- Body --}}
+                        <div class="px-4 py-3.5">
+                            @if($card['region_scope'] === 'global')
+                                <p class="text-xs text-emerald-800 font-medium mb-3 leading-relaxed">
+                                    ✅ This is a <strong>GLOBAL card</strong> — it works directly in Malawi with no VPN or foreign account needed. Simply redeem using the steps below.
+                                </p>
+                            @else
+                                <p class="text-xs text-amber-800 font-medium mb-3 leading-relaxed">
+                                    ⚠️ This is a <strong>{{ $card['region_code'] }} region card</strong>. To use it in Malawi, you need a {{ $card['region_code'] }} account or compatible regional access. Many Malawian buyers use this successfully — contact our support if unsure.
+                                </p>
+                            @endif
+
+                            <div class="border-t {{ $card['region_scope'] === 'global' ? 'border-emerald-200' : 'border-amber-200' }} pt-3">
+                                <h4 class="text-[11px] font-black text-slate-700 uppercase tracking-wide mb-2">
+                                    How to Redeem:
+                                </h4>
+                                <ol class="space-y-1.5">
+                                    @foreach($card['redemption_steps'] as $i => $step)
+                                        <li class="flex gap-2 text-xs text-slate-600 leading-relaxed">
+                                            <span class="font-black {{ $card['region_scope'] === 'global' ? 'text-emerald-600' : 'text-amber-600' }} shrink-0 w-4 text-right">{{ $i + 1 }}.</span>
+                                            <span>{{ $step }}</span>
+                                        </li>
+                                    @endforeach
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
                     {{-- Purchase Card --}}
                     <div class="bg-white rounded-3xl p-6 sm:p-7 border border-slate-100 shadow-md">
                         <div class="flex items-center justify-between mb-1">

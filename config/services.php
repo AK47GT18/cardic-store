@@ -35,4 +35,20 @@ return [
         ],
     ],
 
+    'paychangu' => [
+        'secret_key' => env('PAYCHANGU_SECRET_KEY'),
+        'base_url' => env('PAYCHANGU_BASE_URL', 'https://api.paychangu.com'),
+        'mode' => env('PAYCHANGU_MODE', 'test'),
+    ],
+
+    'reloadly' => [
+        'client_id' => env('RELOADLY_CLIENT_ID', env('API_client_ID')),
+        'client_secret' => env('RELOADLY_CLIENT_SECRET', env('API_client_secret')),
+        'env' => env('RELOADLY_ENV', 'sandbox'),
+    ],
+
+    'admin' => [
+        'email' => env('MAIL_ADMIN_ADDRESS', 'websmtp47@gmail.com'),
+    ],
+
 ];

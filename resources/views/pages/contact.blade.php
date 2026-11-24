@@ -91,10 +91,11 @@
                                         <span class="material-symbols-outlined text-xl">call</span>
                                     </div>
                                     <div>
-                                        <div class="text-sm font-extrabold text-[#0F172A]">Call Us</div>
+                                        <div class="text-sm font-extrabold text-[#0F172A]">Call &amp; WhatsApp</div>
                                         <div class="text-xs text-slate-500 mt-0.5 space-y-0.5">
-                                            <div>Phone : +1 (888) 492-CARD</div>
-                                            <div>Live Desk : 24/7/365 Active</div>
+                                            <div><a href="https://wa.me/265997735236?text=Hello%20Cardic%20Store%20Support" target="_blank" rel="noopener noreferrer" class="text-[#2563EB] hover:underline font-semibold">WhatsApp: 0997 73 52 36</a></div>
+                                            <div>Phone: +265 997 73 52 36</div>
+                                            <div>Live Desk: 24/7/365 Active</div>
                                         </div>
                                     </div>
                                 </div>
@@ -108,21 +109,25 @@
                                 Follow our social media
                             </div>
                             <div class="flex items-center gap-2.5">
-                                <a href="#" aria-label="Facebook"
-                                   class="w-9 h-9 rounded-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white flex items-center justify-center text-xs font-bold transition-transform hover:scale-105 shadow-sm">
+                                {{-- Facebook --}}
+                                <a href="https://www.facebook.com/profile.php?id=61592826425687" target="_blank" rel="noopener noreferrer" aria-label="Facebook"
+                                   class="w-9 h-9 rounded-full bg-[#1877F2] hover:bg-[#165fc7] text-white flex items-center justify-center text-xs font-bold transition-transform hover:scale-105 shadow-sm">
                                     f
                                 </a>
-                                <a href="#" aria-label="Instagram"
-                                   class="w-9 h-9 rounded-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white flex items-center justify-center transition-transform hover:scale-105 shadow-sm">
+                                {{-- Instagram --}}
+                                <a href="https://www.instagram.com/cardicstore?cnvx=ODhvbHA1d3p6d2dl" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
+                                   class="w-9 h-9 rounded-full bg-[#E4405F] hover:bg-[#c9324e] text-white flex items-center justify-center transition-transform hover:scale-105 shadow-sm">
                                     <span class="material-symbols-outlined text-base">photo_camera</span>
                                 </a>
-                                <a href="#" aria-label="Twitter / X"
-                                   class="w-9 h-9 rounded-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white flex items-center justify-center text-xs font-bold transition-transform hover:scale-105 shadow-sm">
-                                    𝕏
+                                {{-- WhatsApp --}}
+                                <a href="https://wa.me/265997735236?text=Hello%20Cardic%20Store%20Support" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"
+                                   class="w-9 h-9 rounded-full bg-[#25D366] hover:bg-[#1ebd5a] text-white flex items-center justify-center transition-transform hover:scale-105 shadow-sm">
+                                    <span class="material-symbols-outlined text-base">chat</span>
                                 </a>
-                                <a href="#" aria-label="Community"
+                                {{-- Email --}}
+                                <a href="mailto:support@cardicstore.com" aria-label="Email Support"
                                    class="w-9 h-9 rounded-full bg-[#2563EB] hover:bg-[#1D4ED8] text-white flex items-center justify-center transition-transform hover:scale-105 shadow-sm">
-                                    <span class="material-symbols-outlined text-base">forum</span>
+                                    <span class="material-symbols-outlined text-base">mail</span>
                                 </a>
                             </div>
                         </div>
@@ -151,12 +156,16 @@
                                         method: 'POST',
                                         headers: {
                                             'Content-Type': 'application/json',
+                                            'Accept': 'application/json',
                                             'X-CSRF-TOKEN': token || ''
                                         },
                                         body: JSON.stringify({
                                             name: this.name,
                                             email: this.email,
-                                            message: `[Subject: ${this.subject || 'General Inquiry'}] [Phone: ${this.phone || 'N/A'}] [Company/Order: ${this.company || 'N/A'}]\n\n${this.message}`
+                                            company: this.company,
+                                            phone: this.phone,
+                                            subject: this.subject,
+                                            message: this.message
                                         })
                                     });
                                     const data = await res.json();

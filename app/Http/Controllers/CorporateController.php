@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\SanitizerService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class CorporateController extends Controller
 {
@@ -45,11 +48,31 @@ class CorporateController extends Controller
     public function inquire(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'company_name' => 'nullable|string|max:100',
-            'email' => 'required|email|max:100',
-            'monthly_volume' => 'nullable|string',
-            'notes' => 'nullable|string|max:500',
+            'company_name' => ['nullable', 'string', 'max:100'],
+            'email' => ['required', 'string', 'email:rfc', 'max:150'],
+            'monthly_volume' => ['nullable', 'string', 'max:100'],
+            'notes' => ['nullable', 'string', 'max:1000'],
         ]);
+
+        $company = SanitizerService::cleanString($validated['company_name'] ?? null, 100);
+        $email = SanitizerService::cleanEmail($validated['email'] ?? '');
+        $volume = SanitizerService::cleanString($validated['monthly_volume'] ?? null, 100);
+        $notes = SanitizerService::cleanString($validated['notes'] ?? null, 1000);
+
+        // Notify Admin of high-value wholesale lead
+        try {
+            $adminEmail = config('services.admin.email', 'websmtp47@gmail.com');
+            Mail::raw(
+                "🚨 New Institutional Wholesale Lead:\n\nCompany: {$company}\nEmail: {$email}\nEstimated Volume: {$volume}\nNotes: {$notes}\nIP: ".$request->ip(),
+                function ($message) use ($adminEmail, $email, $company) {
+                    $message->to($adminEmail)
+                        ->replyTo($email)
+                        ->subject("💼 [Wholesale Lead] {$company} ({$email})");
+                }
+            );
+        } catch (\Exception $e) {
+            Log::error('Wholesale lead email failed: '.$e->getMessage());
+        }
 
         return response()->json([
             'status' => 'success',

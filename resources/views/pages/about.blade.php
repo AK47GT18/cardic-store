@@ -360,7 +360,7 @@
                     <div class="lg:col-span-7">
                         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-[#2563EB] text-xs font-bold mb-3.5">
                             <span class="material-symbols-outlined text-sm">public</span>
-                            <span>Overseas Purchasing Freedom</span>
+                            <span>Official Clearinghouse — cardicstore.com</span>
                         </div>
 
                         <h2 class="font-headline font-black text-2xl sm:text-4xl text-[#0F172A] tracking-tight leading-tight">
@@ -372,7 +372,7 @@
                         </p>
 
                         <p class="mt-2.5 text-xs sm:text-sm text-slate-600 leading-relaxed">
-                            Cardic Store serves as your direct clearing bridge. We provide instant, pre-cleared digital balances across 500+ global brands — backed by real-time balance validation algorithms so your overseas software, hardware, and entertainment purchases complete without friction.
+                            <a href="https://cardicstore.com" class="text-[#2563EB] font-bold hover:underline">Cardic Store (cardicstore.com)</a> serves as your direct clearing bridge. We provide instant, pre-cleared digital balances across 500+ global brands — backed by real-time balance validation algorithms and localized payment rails (including Airtel Money, TNM Mpamba, and Mobile Money via PayChangu in Malawi) so your overseas software, gaming, and subscription purchases complete without friction.
                         </p>
 
                         {{-- 3 Value Points --}}
@@ -474,6 +474,40 @@
                     <img src="{{ asset('images/buying things.jpg') }}" alt="Cardic Store Global Buyers" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                 </div>
 
+            </div>
+        </section>
+
+        {{-- ============================================================
+             SECTION 7: OFFICIAL DOMAIN & DISCOVERY CTA BANNER
+             ============================================================ --}}
+        <section class="py-12 sm:py-16 bg-[#06111E] text-white border-t border-slate-800">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-400/20 text-[#38BDF8] text-xs font-bold uppercase tracking-wider mb-4">
+                    <span class="material-symbols-outlined text-sm">verified</span>
+                    Official Domain: cardicstore.com
+                </span>
+
+                <h2 class="font-headline font-black text-2xl sm:text-4xl text-white tracking-tight">
+                    Start shopping borderless digital vouchers today.
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto mt-3 leading-relaxed">
+                    Join thousands of shoppers, gamers, and teams purchasing over 500+ global brands with instant delivery and escrow protection at <a href="https://cardicstore.com" class="text-[#38BDF8] underline font-bold">cardicstore.com</a>.
+                </p>
+
+                <div class="mt-8 flex flex-wrap items-center justify-center gap-3.5">
+                    <a href="{{ route('marketplace') }}"
+                       class="inline-flex items-center gap-2 bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-extrabold text-xs sm:text-sm px-7 py-3.5 rounded-full shadow-lg transition-transform active:scale-95 cursor-pointer">
+                        <span>Explore All Gift Cards</span>
+                        <span class="material-symbols-outlined text-sm font-bold">arrow_forward</span>
+                    </a>
+
+                    <a href="https://wa.me/265997735236?text=Hello%20Cardic%20Store%20Support"
+                       target="_blank" rel="noopener noreferrer"
+                       class="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebd5a] text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-full shadow-md transition-all">
+                        <span class="material-symbols-outlined text-sm">chat</span>
+                        <span>WhatsApp Desk: 0997 73 52 36</span>
+                    </a>
+                </div>
             </div>
         </section>
 
